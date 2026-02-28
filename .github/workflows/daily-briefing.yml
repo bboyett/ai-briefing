@@ -1,0 +1,43 @@
+name: Daily AI Briefing
+
+on:
+  schedule:
+    # Runs every day at 7:00 AM Eastern Time (12:00 UTC)
+    # To change the time: UTC = Eastern + 5hrs (or +4 during daylight saving)
+    # Format: "minute hour * * *"
+    # Examples: 6AM ET = "0 11 * * *"  |  8AM ET = "0 13 * * *"
+    - cron: "0 12 * * *"
+
+  # Lets you manually trigger from the GitHub Actions tab to test
+  workflow_dispatch:
+
+# Required for the workflow to commit files back to the repo
+permissions:
+  contents: write
+
+jobs:
+  generate-briefing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Generate today's briefing
+        run: python generate_briefing.py
+
+      - name: Commit and push new files
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html briefings/ entries.json
+          git diff --staged --quiet || git commit -m "Briefing: $(date +'%B %d, %Y')"
+          git push
