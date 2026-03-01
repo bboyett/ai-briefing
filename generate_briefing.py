@@ -365,6 +365,7 @@ def build_briefing_page(date_str, display_date, results):
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Briefing — {display_date}</title>
+  <meta name="description" content="Your daily AI news digest for {display_date}, featuring stories from {', '.join(SOURCE_META[slug]['name'] for slug, _ in results)}.">
   <style>
 {SHARED_CSS}
 
@@ -467,6 +468,7 @@ def build_index_page(entries):
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Daily AI Briefing</title>
+  <meta name="description" content="A daily digest of the latest artificial intelligence news, automatically generated each morning from TechCrunch, NYT, MIT Technology Review, and more.">
   <style>
 {SHARED_CSS}
 
@@ -569,6 +571,7 @@ def build_sources_page(used_sources):
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sources — Daily AI Briefing</title>
+  <meta name="description" content="Browse all the news sources behind the Daily AI Briefing, including TechCrunch AI, NYT Technology, MIT Technology Review, and more.">
   <style>
 {SHARED_CSS}
 
@@ -657,6 +660,7 @@ def build_source_page(slug, entries):
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{name} — AI Briefing Archive</title>
+  <meta name="description" content="Archive of AI news articles from {name}. {meta['description'][:120]}...">
   <style>
 {SHARED_CSS}
 
