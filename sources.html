@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sources — Daily AI Briefing</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:    #1a1410;
+  --paper:  #f7f3ec;
+  --cream:  #ede8df;
+  --accent: #c0392b;
+  --muted:  #7a6f65;
+  --rule:   #c8bfb0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.page-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.topnav {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+}
+.topnav a { color: var(--muted); }
+.topnav a:hover { color: var(--accent); text-decoration: none; }
+.topnav a.active { color: var(--ink); font-weight: 500; }
+
+.masthead { margin-bottom: 48px; }
+.masthead-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.masthead h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+.masthead-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+  color: var(--accent);
+  font-size: 18px;
+}
+.masthead-rule::before,
+.masthead-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.footer {
+  text-align: center;
+  padding-top: 40px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  border-top: 1px solid var(--rule);
+  margin-top: 60px;
+}
+
+
+.page-wrap { max-width: 760px; }
+.masthead h1 { font-size: clamp(30px, 5vw, 46px); }
+.masthead-sub { margin-top: 12px; font-size: 15px; color: var(--muted); }
+
+.source-grid { display: flex; flex-direction: column; gap: 12px; }
+
+.source-card {
+  display: flex;
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s;
+  color: var(--ink);
+}
+.source-card:hover { border-color: #aaa; background: #fff; text-decoration: none; }
+
+.card-accent { width: 6px; flex-shrink: 0; }
+.card-body { padding: 20px 24px; flex: 1; }
+.card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.card-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+.card-cta { font-size: 12px; letter-spacing: 0.06em; color: var(--accent); text-transform: uppercase; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <nav class="topnav"><a href="index.html" class="">All Briefings</a><a href="sources.html" class="active">Sources</a></nav>
+
+  <header class="masthead">
+    <p class="masthead-label">Sources</p>
+    <h1>Where the news<br>comes from</h1>
+    <p class="masthead-sub">Every source that has appeared in this briefing, with an archive of all articles pulled from each one.</p>
+  </header>
+
+  <div class="source-grid">
+    
+        <a class="source-card" href="sources/techcrunch.html">
+          <div class="card-accent" style="background:#2c3e6b"></div>
+          <div class="card-body">
+            <h2 class="card-name">TechCrunch AI</h2>
+            <p class="card-desc">TechCrunch is one of the leading technology media properties, dedicated to obsessively profiling startups, reviewing new internet products, and breaking tech news. Their AI section covers funding rounds, product launches, and policy developments across the AI industry.</p>
+            <span class="card-cta">View archive →</span>
+          </div>
+        </a>
+        <a class="source-card" href="sources/nyt.html">
+          <div class="card-accent" style="background:#2c2c2c"></div>
+          <div class="card-body">
+            <h2 class="card-name">NYT Technology</h2>
+            <p class="card-desc">The New York Times Technology section provides in-depth reporting on the people, companies, and ideas shaping the digital world. Their AI coverage ranges from consumer-facing products to national security implications, with a focus on impact and accountability journalism.</p>
+            <span class="card-cta">View archive →</span>
+          </div>
+        </a>
+  </div>
+
+  <footer class="footer">Daily AI Briefing · Sources</footer>
+</div>
+</body>
+</html>
