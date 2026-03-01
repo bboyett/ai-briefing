@@ -19,60 +19,19 @@ HEADERS = {
     )
 }
 
+PROMO_PHRASES = [
+    "actively scaling", "fundraising", "techcrunch founder", "techcrunch disrupt",
+    "save up to", "don't miss", "register by", "ticket"
+]
+
+def is_promo(text):
+    t = text.lower()
+    return any(p in t for p in PROMO_PHRASES)
+
 # ── Scrapers ───────────────────────────────────────────────────────────────────
 
-def scrape_tldr_ai():
-    stories = []
-    try:
-        resp = requests.get("https://tldr.tech/ai", headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(resp.text, "html.parser")
-        for article in soup.find_all("article", limit=6):
-            title_tag = article.find("h3") or article.find("h2")
-            link_tag = article.find("a", href=True)
-            summary_tag = article.find("p")
-            title = title_tag.get_text(strip=True) if title_tag else None
-            link = link_tag["href"] if link_tag else "#"
-            summary = summary_tag.get_text(strip=True)[:220] if summary_tag else ""
-            if title:
-                if link.startswith("/"):
-                    link = "https://tldr.tech" + link
-                stories.append({"title": title, "link": link, "summary": summary})
-    except Exception as e:
-        print(f"TLDR AI scrape failed: {e}")
-    return stories
-
-
-def scrape_mit_tech_review():
-    stories = []
-    try:
-        resp = requests.get(
-            "https://www.technologyreview.com/topic/artificial-intelligence/",
-            headers=HEADERS, timeout=15
-        )
-        soup = BeautifulSoup(resp.text, "html.parser")
-        seen = set()
-        for a in soup.find_all("a", href=True):
-            href = a["href"]
-            title = a.get_text(strip=True)
-            if ("/2026/" in href or "/2025/" in href) and href not in seen and len(title) > 20:
-                seen.add(href)
-                full_link = href if href.startswith("http") else "https://www.technologyreview.com" + href
-                # Try to find a nearby <p> for summary
-                parent = a.find_parent()
-                summary = ""
-                if parent:
-                    p = parent.find_next("p")
-                    if p:
-                        summary = p.get_text(strip=True)[:220]
-                stories.append({"title": title[:120], "link": full_link, "summary": summary})
-            if len(stories) >= 5:
-                break
-    except Exception as e:
-        print(f"MIT Tech Review scrape failed: {e}")
-    return stories
-
-
 def scrape_techcrunch_ai():
+    """TechCrunch AI — headlines only (excerpts are promo banners, not real summaries)."""
     stories = []
     try:
         resp = requests.get(
@@ -81,21 +40,13 @@ def scrape_techcrunch_ai():
         )
         soup = BeautifulSoup(resp.text, "html.parser")
         seen = set()
-        candidates = soup.select("h2 a, h3 a")
-        for a in candidates:
+        for a in soup.select("h2 a, h3 a"):
             href = a.get("href", "#")
             title = a.get_text(strip=True)
-            if href not in seen and len(title) > 10:
+            if href not in seen and len(title) > 10 and not is_promo(title):
                 seen.add(href)
-                # Try to grab excerpt
-                parent = a.find_parent()
-                summary = ""
-                if parent:
-                    p = parent.find_next("p")
-                    if p:
-                        summary = p.get_text(strip=True)[:220]
-                stories.append({"title": title[:120], "link": href, "summary": summary})
-            if len(stories) >= 5:
+                stories.append({"title": title[:120], "link": href, "summary": ""})
+            if len(stories) >= 6:
                 break
     except Exception as e:
         print(f"TechCrunch scrape failed: {e}")
@@ -103,22 +54,133 @@ def scrape_techcrunch_ai():
 
 
 def scrape_rundown_ai():
+    """The Rundown AI — articles page with /articles/ links."""
     stories = []
     try:
-        resp = requests.get("https://www.therundown.ai/p/archive", headers=HEADERS, timeout=15)
+        resp = requests.get("https://www.therundown.ai/articles", headers=HEADERS, timeout=15)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        seen = set()
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            if not href.startswith("/articles/"):
+                continue
+            # Full link text is "Category | Title | Author | read time"
+            # The <p> inside the same link contains just the title
+            p = a.find("p")
+            title = p.get_text(strip=True) if p else a.get_text(strip=True)[:120]
+            if href not in seen and len(title) > 10:
+                seen.add(href)
+                full_link = "https://www.therundown.ai" + href
+                stories.append({"title": title, "link": full_link, "summary": ""})
+            if len(stories) >= 6:
+                break
+    except Exception as e:
+        print(f"Rundown AI scrape failed: {e}")
+    return stories
+
+
+def scrape_verge_ai():
+    """The Verge AI — via RSS feed (page is JS-rendered, RSS is reliable)."""
+    stories = []
+    try:
+        resp = requests.get("https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+                            headers=HEADERS, timeout=15)
+        soup = BeautifulSoup(resp.text, "xml")
+        for item in soup.find_all("item")[:6]:
+            title = item.find("title")
+            link = item.find("link")
+            desc = item.find("description")
+            if title and link:
+                # Strip HTML from description if present
+                desc_text = ""
+                if desc:
+                    desc_soup = BeautifulSoup(desc.get_text(), "html.parser")
+                    desc_text = desc_soup.get_text(strip=True)[:220]
+                stories.append({
+                    "title": title.get_text(strip=True)[:120],
+                    "link": link.get_text(strip=True),
+                    "summary": desc_text
+                })
+    except Exception as e:
+        print(f"Verge scrape failed: {e}")
+    return stories
+
+
+def scrape_venturebeat_ai():
+    """VentureBeat AI — via RSS feed."""
+    stories = []
+    try:
+        resp = requests.get("https://venturebeat.com/feed/", headers=HEADERS, timeout=15)
+        soup = BeautifulSoup(resp.text, "xml")
+        seen = set()
+        for item in soup.find_all("item"):
+            title = item.find("title")
+            link = item.find("link")
+            desc = item.find("description")
+            category_tags = item.find_all("category")
+            cats = [c.get_text(strip=True).lower() for c in category_tags]
+            # Only include AI-related articles
+            if not any("ai" in c or "machine learning" in c or "artificial" in c for c in cats):
+                continue
+            if title and link:
+                href = link.get_text(strip=True)
+                if href in seen:
+                    continue
+                seen.add(href)
+                desc_text = ""
+                if desc:
+                    desc_soup = BeautifulSoup(desc.get_text(), "html.parser")
+                    desc_text = desc_soup.get_text(strip=True)[:220]
+                stories.append({
+                    "title": title.get_text(strip=True)[:120],
+                    "link": href,
+                    "summary": desc_text
+                })
+            if len(stories) >= 6:
+                break
+    except Exception as e:
+        print(f"VentureBeat scrape failed: {e}")
+    return stories
+
+
+def scrape_nytimes_ai():
+    """NYT Technology section — scrape headlines + excerpts."""
+    stories = []
+    try:
+        resp = requests.get("https://www.nytimes.com/section/technology",
+                            headers=HEADERS, timeout=15)
         soup = BeautifulSoup(resp.text, "html.parser")
         seen = set()
         for a in soup.find_all("a", href=True):
             href = a["href"]
             title = a.get_text(strip=True)
-            if "/p/" in href and len(title) > 15 and href not in seen:
-                seen.add(href)
-                full_link = href if href.startswith("http") else "https://www.therundown.ai" + href
-                stories.append({"title": title[:120], "link": full_link, "summary": ""})
-            if len(stories) >= 5:
+            if "/2026/" not in href and "/2025/" not in href:
+                continue
+            if "/technology/" not in href and "/business/" not in href:
+                continue
+            if href in seen or len(title) < 25:
+                continue
+            seen.add(href)
+            # Walk up parents to find excerpt <p>
+            summary = ""
+            parent = a.find_parent()
+            for _ in range(5):
+                if not parent:
+                    break
+                p = parent.find("p")
+                if p:
+                    text = p.get_text(strip=True)
+                    # Skip if it's the same as the title
+                    if text and text != title and len(text) > 30:
+                        summary = text[:220]
+                        break
+                parent = parent.find_parent()
+            full_link = href if href.startswith("http") else "https://www.nytimes.com" + href
+            stories.append({"title": title[:120], "link": full_link, "summary": summary})
+            if len(stories) >= 6:
                 break
     except Exception as e:
-        print(f"Rundown AI scrape failed: {e}")
+        print(f"NYT scrape failed: {e}")
     return stories
 
 
@@ -136,10 +198,11 @@ SHARED_CSS = """
   --accent:    #c0392b;
   --muted:     #7a6f65;
   --rule:      #c8bfb0;
-  --col-tldr:  #2c3e6b;
-  --col-mit:   #8b1a1a;
-  --col-tc:    #1a5c3a;
-  --col-run:   #6b3a1a;
+  --col-tc:    #2c3e6b;
+  --col-run:   #8b1a1a;
+  --col-verge: #1a5c3a;
+  --col-vb:    #6b3a1a;
+  --col-nyt:   #2c2c2c;
 }
 
 body {
@@ -155,7 +218,7 @@ a:hover { text-decoration: underline; }
 """
 
 def build_briefing_page(date_str, display_date, sections):
-    tldr, mit, tc, rundown = sections
+    tc, rundown, verge, vb, nyt = sections
 
     def source_section(slug, label, color_var, stories):
         if not stories:
@@ -323,17 +386,19 @@ def build_briefing_page(date_str, display_date, sections):
   <nav class="toc">
     <p class="toc-title">In this issue</p>
     <ul>
-      <li><a href="#tldr">TLDR AI</a></li>
-      <li><a href="#mit">MIT Technology Review</a></li>
       <li><a href="#techcrunch">TechCrunch AI</a></li>
       <li><a href="#rundown">The Rundown AI</a></li>
+      <li><a href="#verge">The Verge</a></li>
+      <li><a href="#venturebeat">VentureBeat</a></li>
+      <li><a href="#nyt">NYT Technology</a></li>
     </ul>
   </nav>
 
-  {source_section("tldr", "TLDR AI", "--col-tldr", tldr)}
-  {source_section("mit", "MIT Technology Review", "--col-mit", mit)}
   {source_section("techcrunch", "TechCrunch AI", "--col-tc", tc)}
   {source_section("rundown", "The Rundown AI", "--col-run", rundown)}
+  {source_section("verge", "The Verge", "--col-verge", verge)}
+  {source_section("venturebeat", "VentureBeat", "--col-vb", vb)}
+  {source_section("nyt", "NYT Technology", "--col-nyt", nyt)}
 
   <footer class="footer">
     Generated automatically on {display_date} · Your Daily AI Briefing
@@ -511,15 +576,6 @@ if __name__ == "__main__":
 
     print(f"Generating briefing for {display_date}...")
 
-    # Scrape
-    print("  Scraping TLDR AI...")
-    tldr = scrape_tldr_ai()
-    print(f"    {len(tldr)} stories")
-
-    print("  Scraping MIT Technology Review...")
-    mit = scrape_mit_tech_review()
-    print(f"    {len(mit)} stories")
-
     print("  Scraping TechCrunch AI...")
     tc = scrape_techcrunch_ai()
     print(f"    {len(tc)} stories")
@@ -528,9 +584,21 @@ if __name__ == "__main__":
     rundown = scrape_rundown_ai()
     print(f"    {len(rundown)} stories")
 
+    print("  Scraping The Verge...")
+    verge = scrape_verge_ai()
+    print(f"    {len(verge)} stories")
+
+    print("  Scraping VentureBeat...")
+    vb = scrape_venturebeat_ai()
+    print(f"    {len(vb)} stories")
+
+    print("  Scraping NYT Technology...")
+    nyt = scrape_nytimes_ai()
+    print(f"    {len(nyt)} stories")
+
     # Write briefing page
     os.makedirs("briefings", exist_ok=True)
-    briefing_html = build_briefing_page(date_str, display_date, [tldr, mit, tc, rundown])
+    briefing_html = build_briefing_page(date_str, display_date, [tc, rundown, verge, vb, nyt])
     briefing_path = f"briefings/{date_str}.html"
     with open(briefing_path, "w", encoding="utf-8") as f:
         f.write(briefing_html)
