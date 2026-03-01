@@ -38,6 +38,6 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html briefings/ entries.json
+          git add index.html briefings/ entries.json sources.html sources/ source_data.json
           git diff --staged --quiet || git commit -m "Briefing: $(date +'%B %d, %Y')"
           git push
