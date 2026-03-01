@@ -826,7 +826,9 @@ def save_json(path, data):
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    now = datetime.utcnow()
+    from datetime import timezone, timedelta
+ET = timezone(timedelta(hours=-5))
+now = datetime.now(ET)
     date_str = now.strftime("%Y-%m-%d")
     display_date = now.strftime("%B %d, %Y")
 
