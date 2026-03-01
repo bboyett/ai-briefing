@@ -22,16 +22,6 @@ HEADERS = {
     )
 }
 
-PROMO_PHRASES = [
-    "actively scaling", "fundraising", "techcrunch founder", "techcrunch disrupt",
-    "save up to", "don't miss", "register by", "ticket sales"
-]
-
-def is_promo(text):
-    t = text.lower()
-    return any(p in t for p in PROMO_PHRASES)
-
-
 # ── Source Registry ────────────────────────────────────────────────────────────
 # Every possible source. Add new ones here — if scraping fails, it just won't appear.
 
@@ -112,26 +102,56 @@ SOURCE_META = {
 
 # ── Scrapers ───────────────────────────────────────────────────────────────────
 
-def scrape_techcrunch_ai():
+def parse_rss(url, limit=6, ai_filter=False):
+    """
+    Generic RSS parser. Returns list of {title, link, summary} dicts.
+    If ai_filter=True, only includes items whose category contains AI-related terms.
+    """
     stories = []
     try:
-        resp = requests.get(SOURCE_META["techcrunch"]["url"], headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(resp.text, "html.parser")
-        seen = set()
-        for a in soup.select("h2 a, h3 a"):
-            href = a.get("href", "#")
-            title = a.get_text(strip=True)
-            if href not in seen and len(title) > 10 and not is_promo(title):
-                seen.add(href)
-                stories.append({"title": title[:120], "link": href, "summary": ""})
-            if len(stories) >= 6:
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        soup = BeautifulSoup(resp.text, "xml")
+        for item in soup.find_all("item"):
+            title_tag = item.find("title")
+            link_tag = item.find("link")
+            desc_tag = item.find("description")
+
+            if not title_tag or not link_tag:
+                continue
+
+            title = title_tag.get_text(strip=True)
+            link = link_tag.get_text(strip=True)
+
+            if ai_filter:
+                cats = [c.get_text(strip=True).lower() for c in item.find_all("category")]
+                if not any("ai" in c or "machine learning" in c or "artificial" in c for c in cats):
+                    continue
+
+            summary = ""
+            if desc_tag:
+                desc_soup = BeautifulSoup(desc_tag.get_text(), "html.parser")
+                summary = desc_soup.get_text(strip=True)[:220]
+
+            if len(title) > 5:
+                stories.append({"title": title[:120], "link": link, "summary": summary})
+
+            if len(stories) >= limit:
                 break
     except Exception as e:
-        print(f"  TechCrunch failed: {e}")
+        raise e
     return stories
 
 
+def scrape_techcrunch_ai():
+    try:
+        return parse_rss("https://techcrunch.com/category/artificial-intelligence/feed/")
+    except Exception as e:
+        print(f"  TechCrunch failed: {e}")
+        return []
+
+
 def scrape_rundown_ai():
+    """Rundown AI has no RSS — scrape the articles page directly."""
     stories = []
     try:
         resp = requests.get(SOURCE_META["rundown"]["url"], headers=HEADERS, timeout=15)
@@ -158,128 +178,37 @@ def scrape_rundown_ai():
 
 
 def scrape_verge_ai():
-    stories = []
     try:
-        resp = requests.get(
-            "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
-            headers=HEADERS, timeout=15
-        )
-        soup = BeautifulSoup(resp.text, "xml")
-        for item in soup.find_all("item")[:6]:
-            title = item.find("title")
-            link = item.find("link")
-            desc = item.find("description")
-            if title and link:
-                desc_text = ""
-                if desc:
-                    desc_soup = BeautifulSoup(desc.get_text(), "html.parser")
-                    desc_text = desc_soup.get_text(strip=True)[:220]
-                stories.append({
-                    "title": title.get_text(strip=True)[:120],
-                    "link": link.get_text(strip=True),
-                    "summary": desc_text,
-                })
+        return parse_rss("https://www.theverge.com/rss/ai-artificial-intelligence/index.xml")
     except Exception as e:
         print(f"  Verge failed: {e}")
-    return stories
+        return []
 
 
 def scrape_venturebeat_ai():
-    stories = []
     try:
-        resp = requests.get("https://venturebeat.com/feed/", headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(resp.text, "xml")
-        seen = set()
-        for item in soup.find_all("item"):
-            title = item.find("title")
-            link = item.find("link")
-            desc = item.find("description")
-            cats = [c.get_text(strip=True).lower() for c in item.find_all("category")]
-            if not any("ai" in c or "machine learning" in c or "artificial" in c for c in cats):
-                continue
-            if title and link:
-                href = link.get_text(strip=True)
-                if href in seen:
-                    continue
-                seen.add(href)
-                desc_text = ""
-                if desc:
-                    desc_soup = BeautifulSoup(desc.get_text(), "html.parser")
-                    desc_text = desc_soup.get_text(strip=True)[:220]
-                stories.append({
-                    "title": title.get_text(strip=True)[:120],
-                    "link": href,
-                    "summary": desc_text,
-                })
-            if len(stories) >= 6:
-                break
+        return parse_rss("https://venturebeat.com/feed/", ai_filter=True)
     except Exception as e:
         print(f"  VentureBeat failed: {e}")
-    return stories
+        return []
 
 
 def scrape_nytimes_ai():
-    stories = []
     try:
-        resp = requests.get(SOURCE_META["nyt"]["url"], headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(resp.text, "html.parser")
-        seen = set()
-        for a in soup.find_all("a", href=True):
-            href = a["href"]
-            title = a.get_text(strip=True)
-            if "/2026/" not in href and "/2025/" not in href:
-                continue
-            if "/technology/" not in href and "/business/" not in href:
-                continue
-            if href in seen or len(title) < 25:
-                continue
-            seen.add(href)
-            summary = ""
-            parent = a.find_parent()
-            for _ in range(5):
-                if not parent:
-                    break
-                p = parent.find("p")
-                if p:
-                    text = p.get_text(strip=True)
-                    if text and text != title and len(text) > 30:
-                        summary = text[:220]
-                        break
-                parent = parent.find_parent()
-            full_link = href if href.startswith("http") else "https://www.nytimes.com" + href
-            stories.append({"title": title[:120], "link": full_link, "summary": summary})
-            if len(stories) >= 6:
-                break
+        return parse_rss(
+            "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/technology/rss.xml"
+        )
     except Exception as e:
         print(f"  NYT failed: {e}")
-    return stories
+        return []
 
 
 def scrape_mit_ai():
-    """MIT Tech Review — may be paywalled, but we try."""
-    stories = []
     try:
-        resp = requests.get(SOURCE_META["mit"]["url"], headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(resp.text, "html.parser")
-        seen = set()
-        for a in soup.find_all("a", href=True):
-            href = a["href"]
-            title = a.get_text(strip=True)
-            if ("/2026/" in href or "/2025/" in href) and href not in seen and len(title) > 20:
-                seen.add(href)
-                full_link = href if href.startswith("http") else "https://www.technologyreview.com" + href
-                parent = a.find_parent()
-                summary = ""
-                if parent:
-                    p = parent.find_next("p")
-                    if p:
-                        summary = p.get_text(strip=True)[:220]
-                stories.append({"title": title[:120], "link": full_link, "summary": summary})
-            if len(stories) >= 6:
-                break
+        return parse_rss("https://www.technologyreview.com/feed/")
     except Exception as e:
         print(f"  MIT Tech Review failed: {e}")
-    return stories
+        return []
 
 
 # Map slug -> scraper function
@@ -826,9 +755,7 @@ def save_json(path, data):
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    from datetime import timezone, timedelta
-ET = timezone(timedelta(hours=-5))
-now = datetime.now(ET)
+    now = datetime.utcnow()
     date_str = now.strftime("%Y-%m-%d")
     display_date = now.strftime("%B %d, %Y")
 
