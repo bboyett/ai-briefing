@@ -1,0 +1,15 @@
+/*
+  # Prevents your site from being embedded in iframes on other sites (clickjacking protection)
+  X-Frame-Options: DENY
+
+  # Stops browsers from guessing file types, which can cause security issues
+  X-Content-Type-Options: nosniff
+
+  # Controls how much info is shared when someone clicks a link away from your site
+  Referrer-Policy: no-referrer-when-downgrade
+
+  # Tells browsers to only use HTTPS for the next year
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # Restricts what content your site can load — safe defaults for a static blog
+  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'
