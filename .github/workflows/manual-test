@@ -1,0 +1,34 @@
+name: Manual Test Run
+
+on:
+  # Only runs when you click "Run workflow" in the Actions tab — never on a schedule
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-briefing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4 lxml
+
+      - name: Run test scrape
+        run: python generate_test.py
+
+      - name: Commit and push test files
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html briefings/ test_entries.json
+          git diff --staged --quiet || git commit -m "Test run: $(date +'%B %d, %Y %H:%M UTC')"
+          git push
