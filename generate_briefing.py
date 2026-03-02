@@ -97,6 +97,87 @@ SOURCE_META = {
             "technology — written for a technically literate audience."
         ),
     },
+    "wired": {
+        "name": "Wired",
+        "slug": "wired",
+        "color": "#1a1a1a",
+        "url": "https://www.wired.com/tag/artificial-intelligence/",
+        "description": (
+            "Wired is a monthly American magazine and online publication that focuses on how "
+            "emerging technologies affect culture, the economy, and politics. Their AI coverage "
+            "spans consumer products, research breakthroughs, and the social consequences of "
+            "automation and machine intelligence."
+        ),
+    },
+    "foxbusiness": {
+        "name": "Fox Business Technology",
+        "slug": "foxbusiness",
+        "color": "#003366",
+        "url": "https://www.foxbusiness.com/technology",
+        "description": (
+            "Fox Business covers technology through a business and markets lens, reporting on "
+            "earnings, executive moves, policy impacts, and the financial stakes of AI and "
+            "big tech. Their technology section is a key source for Wall Street's perspective "
+            "on the industry."
+        ),
+    },
+    "hackernews": {
+        "name": "Hacker News",
+        "slug": "hackernews",
+        "color": "#ff6600",
+        "url": "https://news.ycombinator.com/",
+        "description": (
+            "Hacker News is a social news site run by Y Combinator, read primarily by software "
+            "engineers, founders, and researchers. Its front page surfaces the most discussed "
+            "links in the tech and AI community each day — making it a reliable signal of what "
+            "practitioners are paying attention to."
+        ),
+    },
+    "bloomberg": {
+        "name": "Bloomberg Technology",
+        "slug": "bloomberg",
+        "color": "#1b1464",
+        "url": "https://www.bloomberg.com/technology",
+        "description": (
+            "Bloomberg Technology covers the business of tech with a focus on markets, "
+            "enterprise, and the global economy. Their AI reporting tracks investment trends, "
+            "corporate strategy, and the financial impact of AI across every sector."
+        ),
+    },
+    "techradar": {
+        "name": "TechRadar",
+        "slug": "techradar",
+        "color": "#0057a8",
+        "url": "https://www.techradar.com/tag/artificial-intelligence",
+        "description": (
+            "TechRadar is a leading consumer technology news and reviews site. Their AI coverage "
+            "focuses on practical applications, new product launches, and how AI is being "
+            "integrated into everyday software and hardware."
+        ),
+    },
+    "siliconvalley": {
+        "name": "Silicon Valley News",
+        "slug": "siliconvalley",
+        "color": "#2e7d32",
+        "url": "https://www.siliconvalley.com/technology/",
+        "description": (
+            "Silicon Valley News covers the tech industry from the heart of the Bay Area, "
+            "reporting on startups, established giants, and the culture of innovation. "
+            "Their AI coverage reflects the ground-level view from inside the industry."
+        ),
+    },
+    # ── PLACEHOLDER: CNBC ─────────────────────────────────────────────────────
+    # CNBC's technology page (https://www.cnbc.com/technology/) is a JavaScript-rendered
+    # React app — article titles are NOT present in the raw HTML fetched by requests.
+    # TO FIX: Re-upload generate_briefing.py to Claude and ask it to add Selenium or
+    # Playwright support for CNBC. The target page is https://www.cnbc.com/technology/
+    # and article links follow the pattern /YYYY/MM/DD/article-slug.html
+    # ── PLACEHOLDER: WSJ ──────────────────────────────────────────────────────
+    # WSJ (https://www.wsj.com/tech) is also JavaScript-rendered AND paywalled.
+    # TO FIX: Re-upload generate_briefing.py to Claude and ask it to either:
+    #   (a) add Selenium/Playwright support, or
+    #   (b) find a working public WSJ RSS feed (try https://feeds.a.dj.com/rss/RSSWSJD.xml)
+    # Articles on WSJ tech follow the pattern /articles/article-slug
 }
 
 
@@ -211,14 +292,211 @@ def scrape_mit_ai():
         return []
 
 
+def scrape_wired_ai():
+    """Wired AI tag page — scrape HTML directly."""
+    stories = []
+    try:
+        resp = requests.get(
+            "https://www.wired.com/tag/artificial-intelligence/",
+            headers=HEADERS, timeout=15
+        )
+        soup = BeautifulSoup(resp.text, "html.parser")
+        seen = set()
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            # Wired article URLs look like /story/article-slug/
+            if "/story/" not in href:
+                continue
+            # Normalise to absolute URL
+            if href.startswith("/"):
+                href = "https://www.wired.com" + href
+            if href in seen:
+                continue
+            # Title is usually in an <h3> or <h2> inside the link, or the link text itself
+            heading = a.find(["h2", "h3"])
+            title = heading.get_text(strip=True) if heading else a.get_text(strip=True)[:120]
+            if len(title) > 10:
+                seen.add(href)
+                stories.append({"title": title[:120], "link": href, "summary": ""})
+            if len(stories) >= 6:
+                break
+    except Exception as e:
+        print(f"  Wired failed: {e}")
+    return stories
+
+
+def scrape_foxbusiness_ai():
+    """Fox Business technology page — scrape HTML directly.
+    Article links are <a href="/technology/article-slug"> with the title in aria-label.
+    """
+    stories = []
+    try:
+        resp = requests.get(
+            "https://www.foxbusiness.com/technology",
+            headers=HEADERS, timeout=15
+        )
+        soup = BeautifulSoup(resp.text, "html.parser")
+        seen = set()
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            # Only article links under /technology/
+            if not href.startswith("/technology/"):
+                continue
+            # aria-label carries the clean title on Fox Business
+            title = a.get("aria-label", "").strip()
+            if not title:
+                # Fallback: look for an <h3> inside the link
+                h = a.find("h3")
+                title = h.get_text(strip=True) if h else ""
+            full_url = "https://www.foxbusiness.com" + href
+            if full_url not in seen and len(title) > 10:
+                seen.add(full_url)
+                stories.append({"title": title[:120], "link": full_url, "summary": ""})
+            if len(stories) >= 6:
+                break
+    except Exception as e:
+        print(f"  Fox Business failed: {e}")
+    return stories
+
+
+def scrape_hackernews():
+    """Hacker News — RSS feed (robots.txt disallows but not technically blocked)."""
+    try:
+        return parse_rss("https://news.ycombinator.com/rss", limit=6, ai_filter=False)
+    except Exception as e:
+        print(f"  Hacker News failed: {e}")
+        return []
+
+
+def scrape_bloomberg_ai():
+    """Bloomberg Technology — RSS feed with keyword AI filter."""
+    AI_KEYWORDS = {
+        "ai", "artificial intelligence", "machine learning", "llm", "gpt",
+        "chatgpt", "openai", "anthropic", "deepmind", "neural", "model",
+        "chatbot", "generative", "automation", "robotics",
+    }
+    stories = []
+    try:
+        resp = requests.get(
+            "https://feeds.bloomberg.com/technology/news.rss",
+            headers=HEADERS, timeout=15
+        )
+        soup = BeautifulSoup(resp.text, "xml")
+        for item in soup.find_all("item"):
+            title_tag = item.find("title")
+            link_tag = item.find("link")
+            desc_tag = item.find("description")
+            if not title_tag or not link_tag:
+                continue
+            title = title_tag.get_text(strip=True)
+            link = link_tag.get_text(strip=True)
+            summary = ""
+            if desc_tag:
+                summary = BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True)[:220]
+            # Only keep if title or summary mentions AI
+            combined = (title + " " + summary).lower()
+            if not any(kw in combined for kw in AI_KEYWORDS):
+                continue
+            if len(title) > 5:
+                stories.append({"title": title[:120], "link": link, "summary": summary})
+            if len(stories) >= 6:
+                break
+    except Exception as e:
+        print(f"  Bloomberg failed: {e}")
+    return stories
+
+
+def scrape_techradar_ai():
+    """TechRadar — RSS feed with keyword AI filter."""
+    AI_KEYWORDS = {
+        "ai", "artificial intelligence", "machine learning", "llm", "gpt",
+        "chatgpt", "openai", "anthropic", "deepmind", "neural", "model",
+        "chatbot", "generative", "automation", "robotics",
+    }
+    stories = []
+    try:
+        resp = requests.get(
+            "https://www.techradar.com/rss",
+            headers=HEADERS, timeout=15
+        )
+        soup = BeautifulSoup(resp.text, "xml")
+        for item in soup.find_all("item"):
+            title_tag = item.find("title")
+            link_tag = item.find("link")
+            desc_tag = item.find("description")
+            if not title_tag or not link_tag:
+                continue
+            title = title_tag.get_text(strip=True)
+            link = link_tag.get_text(strip=True)
+            summary = ""
+            if desc_tag:
+                summary = BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True)[:220]
+            combined = (title + " " + summary).lower()
+            if not any(kw in combined for kw in AI_KEYWORDS):
+                continue
+            if len(title) > 5:
+                stories.append({"title": title[:120], "link": link, "summary": summary})
+            if len(stories) >= 6:
+                break
+    except Exception as e:
+        print(f"  TechRadar failed: {e}")
+    return stories
+
+
+def scrape_siliconvalley_ai():
+    """Silicon Valley News — RSS feed with keyword AI filter."""
+    AI_KEYWORDS = {
+        "ai", "artificial intelligence", "machine learning", "llm", "gpt",
+        "chatgpt", "openai", "anthropic", "deepmind", "neural", "model",
+        "chatbot", "generative", "automation", "robotics",
+    }
+    stories = []
+    try:
+        resp = requests.get(
+            "https://www.siliconvalley.com/feed/",
+            headers=HEADERS, timeout=15
+        )
+        soup = BeautifulSoup(resp.text, "xml")
+        for item in soup.find_all("item"):
+            title_tag = item.find("title")
+            link_tag = item.find("link")
+            desc_tag = item.find("description")
+            if not title_tag or not link_tag:
+                continue
+            title = title_tag.get_text(strip=True)
+            link = link_tag.get_text(strip=True)
+            summary = ""
+            if desc_tag:
+                summary = BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True)[:220]
+            combined = (title + " " + summary).lower()
+            if not any(kw in combined for kw in AI_KEYWORDS):
+                continue
+            if len(title) > 5:
+                stories.append({"title": title[:120], "link": link, "summary": summary})
+            if len(stories) >= 6:
+                break
+    except Exception as e:
+        print(f"  Silicon Valley News failed: {e}")
+    return stories
+
+
 # Map slug -> scraper function
 SCRAPERS = {
-    "techcrunch":  scrape_techcrunch_ai,
-    "rundown":     scrape_rundown_ai,
-    "verge":       scrape_verge_ai,
-    "venturebeat": scrape_venturebeat_ai,
-    "nyt":         scrape_nytimes_ai,
-    "mit":         scrape_mit_ai,
+    "techcrunch":    scrape_techcrunch_ai,
+    "rundown":       scrape_rundown_ai,
+    "verge":         scrape_verge_ai,
+    "venturebeat":   scrape_venturebeat_ai,
+    "nyt":           scrape_nytimes_ai,
+    "mit":           scrape_mit_ai,
+    # ── New sources ───────────────────────────────────────────────
+    "wired":         scrape_wired_ai,
+    "foxbusiness":   scrape_foxbusiness_ai,
+    "hackernews":    scrape_hackernews,
+    "bloomberg":     scrape_bloomberg_ai,
+    "techradar":     scrape_techradar_ai,
+    "siliconvalley": scrape_siliconvalley_ai,
+    # "cnbc":        scrape_cnbc_ai,   # TODO: needs Selenium — see placeholder in SOURCE_META
+    # "wsj":         scrape_wsj_ai,    # TODO: needs Selenium — see placeholder in SOURCE_META
 }
 
 
