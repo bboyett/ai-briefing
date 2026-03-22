@@ -1032,6 +1032,36 @@ def save_json(path, data):
         json.dump(data, f, indent=2)
 
 
+
+# ── Sitemap ────────────────────────────────────────────────────────────────────
+
+def build_sitemap(entries, base_url="https://bboyett.github.io/ai-briefing"):
+    today = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    
+    def url_block(loc, priority):
+        return f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{today}</lastmod>\n    <priority>{priority}</priority>\n  </url>"
+
+    blocks = []
+    # Homepage
+    blocks.append(url_block(f"{base_url}/", "1.00"))
+    blocks.append(url_block(f"{base_url}/index.html", "0.80"))
+    # Sources index
+    blocks.append(url_block(f"{base_url}/sources.html", "0.80"))
+    # Each daily briefing
+    for e in entries:
+        blocks.append(url_block(f"{base_url}/briefings/{e['date_str']}.html", "0.80"))
+    # Each per-source page
+    for slug in SOURCE_META:
+        blocks.append(url_block(f"{base_url}/sources/{slug}.html", "0.64"))
+
+    return f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+              http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+{chr(10).join(blocks)}
+</urlset>"""
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
@@ -1111,5 +1141,9 @@ if __name__ == "__main__":
         with open(f"sources/{slug}.html", "w", encoding="utf-8") as f:
             f.write(build_source_page(slug, source_data[slug]))
         print(f"  Written: sources/{slug}.html")
+
+        with open("sitemap.xml", "w", encoding="utf-8") as f:
+        f.write(build_sitemap(entries))
+    print("  Written: sitemap.xml")
 
     print("\nDone! ✅")
