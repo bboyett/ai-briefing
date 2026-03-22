@@ -444,7 +444,7 @@ def scrape_techradar_ai():
 
 
 def scrape_siliconvalley_ai():
-    """Silicon Valley News — RSS feed with keyword AI filter."""
+    """Silicon Valley News — scrape the technology page directly with AI keyword filter."""
     AI_KEYWORDS = {
         "ai", "artificial intelligence", "machine learning", "llm", "gpt",
         "chatgpt", "openai", "anthropic", "deepmind", "neural", "model",
@@ -453,26 +453,24 @@ def scrape_siliconvalley_ai():
     stories = []
     try:
         resp = requests.get(
-            "https://www.siliconvalley.com/feed/",
+            "https://www.siliconvalley.com/business/technology/",
             headers=HEADERS, timeout=15
         )
-        soup = BeautifulSoup(resp.text, "xml")
-        for item in soup.find_all("item"):
-            title_tag = item.find("title")
-            link_tag = item.find("link")
-            desc_tag = item.find("description")
-            if not title_tag or not link_tag:
+        soup = BeautifulSoup(resp.text, "html.parser")
+        seen = set()
+        for a in soup.find_all("a", href=True):
+            href = a["href"]
+            if not href.startswith("https://www.siliconvalley.com/2"):
                 continue
-            title = title_tag.get_text(strip=True)
-            link = link_tag.get_text(strip=True)
-            summary = ""
-            if desc_tag:
-                summary = BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True)[:220]
-            combined = (title + " " + summary).lower()
+            heading = a.find(["h2", "h3"])
+            title = heading.get_text(strip=True) if heading else a.get_text(strip=True)[:120]
+            if len(title) < 10 or href in seen:
+                continue
+            combined = title.lower()
             if not any(kw in combined for kw in AI_KEYWORDS):
                 continue
-            if len(title) > 5:
-                stories.append({"title": title[:120], "link": link, "summary": summary})
+            seen.add(href)
+            stories.append({"title": title[:120], "link": href, "summary": ""})
             if len(stories) >= 6:
                 break
     except Exception as e:
