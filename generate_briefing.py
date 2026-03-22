@@ -1143,7 +1143,7 @@ if __name__ == "__main__":
         print(f"  Written: sources/{slug}.html")
 
         with open("sitemap.xml", "w", encoding="utf-8") as f:
-        f.write(build_sitemap(entries))
-    print("  Written: sitemap.xml")
+            f.write(build_sitemap(entries))
+        print("  Written: sitemap.xml")
 
     print("\nDone! ✅")
