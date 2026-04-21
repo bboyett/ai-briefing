@@ -89,6 +89,7 @@ SOURCE_META = {
         "name": "MIT Technology Review",
         "slug": "mit",
         "color": "#8b0000",
+        "paywalled": True
         "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
         "description": (
             "MIT Technology Review is one of the world's oldest and most respected technology "
@@ -622,6 +623,7 @@ def build_briefing_page(date_str, display_date, results):
               <a class="story-link" href="{s['link']}" target="_blank" rel="noopener">
                 <h3 class="story-title">{s['title']}</h3>
               </a>
+              {paywall_badge}
               {excerpt}
             </article>"""
 
@@ -646,6 +648,14 @@ def build_briefing_page(date_str, display_date, results):
 {SHARED_CSS}
 
 .masthead {{ text-align: center; }}
+
+.paywall-badge {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 0.03em;
+}
 
 .toc {{
   background: var(--cream);
