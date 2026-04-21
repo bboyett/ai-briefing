@@ -666,13 +666,13 @@ def build_briefing_page(date_str, display_date, results):
 
 .masthead {{ text-align: center; }}
 
-.paywall-badge {
+.paywall-badge {{
   display: inline-block;
   font-size: 11px;
   color: var(--muted);
   margin-top: 4px;
   letter-spacing: 0.03em;
-}
+}}
 
 .toc {{
   background: var(--cream);
