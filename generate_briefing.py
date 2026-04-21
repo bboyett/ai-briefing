@@ -89,7 +89,7 @@ SOURCE_META = {
         "name": "MIT Technology Review",
         "slug": "mit",
         "color": "#8b0000",
-        "paywalled": True
+        "paywalled": True,
         "url": "https://www.technologyreview.com/topic/artificial-intelligence/",
         "description": (
             "MIT Technology Review is one of the world's oldest and most respected technology "
@@ -618,6 +618,7 @@ def build_briefing_page(date_str, display_date, results):
         items_html = ""
         for s in stories:
             excerpt = f'<p class="excerpt">{s["summary"]}</p>' if s.get("summary") else ""
+            paywall_badge = '<span class="paywall-badge">🔒 Subscription may be required</span>' if SOURCE_META[slug].get("paywalled") else ""
             items_html += f"""
             <article class="story">
               <a class="story-link" href="{s['link']}" target="_blank" rel="noopener">
