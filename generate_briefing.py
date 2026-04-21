@@ -38,6 +38,30 @@ SOURCE_META = {
             "policy developments across the AI industry."
         ),
     },
+    "arstechnica": {
+        "name": "Ars Technica AI",
+        "slug": "arstechnica",
+        "color": "#cc0000",
+        "url": "https://arstechnica.com/ai/",
+        "description": (
+            "Ars Technica has covered technology since 1998 with a reputation for technical "
+            "depth and rigorous reporting. Their dedicated AI section covers research "
+            "breakthroughs, policy developments, and the industry moves that matter — "
+            "written for technically literate readers who want the 'how', not just the 'what'."
+        ),
+    },
+    "zdnet": {
+        "name": "ZDNet AI",
+        "slug": "zdnet",
+        "color": "#d4000d",
+        "url": "https://www.zdnet.com/topic/artificial-intelligence/",
+        "description": (
+            "ZDNet covers technology for business and IT professionals. Their AI topic "
+            "section focuses on enterprise adoption, product launches, and practical "
+            "implications of AI tools — a grounded counterweight to more research-focused "
+            "publications."
+        ),
+    },
     "rundown": {
         "name": "The Rundown AI",
         "slug": "rundown",
@@ -232,36 +256,15 @@ def scrape_techcrunch_ai():
         return []
 
 
-def scrape_rundown_ai():
-    """Rundown AI has no RSS — scrape the articles page directly."""
-    stories = []
-    try:
-        resp = requests.get(SOURCE_META["rundown"]["url"], headers=HEADERS, timeout=15)
-        soup = BeautifulSoup(resp.text, "html.parser")
-        seen = set()
-        for a in soup.find_all("a", href=True):
-            href = a["href"]
-            if not href.startswith("/articles/"):
-                continue
-            p = a.find("p")
-            title = p.get_text(strip=True) if p else a.get_text(strip=True)[:120]
-            if href not in seen and len(title) > 10:
-                seen.add(href)
-                stories.append({
-                    "title": title,
-                    "link": "https://www.therundown.ai" + href,
-                    "summary": ""
-                })
-            if len(stories) >= 6:
-                break
-    except Exception as e:
-        print(f"  Rundown AI failed: {e}")
-    return stories
+# def scrape_rundown_ai():
+#     DISABLED: therundown.ai is JavaScript-rendered — requests only gets an empty shell.
+#     TO FIX: Re-upload this file to Claude and ask it to add Selenium/Playwright support.
+#     The articles are at https://www.therundown.ai/articles and links start with /articles/
 
 
 def scrape_verge_ai():
     try:
-        return parse_rss("https://www.theverge.com/rss/ai-artificial-intelligence/index.xml")
+        return parse_rss("https://www.theverge.com/rss/index.xml", ai_filter=True)
     except Exception as e:
         print(f"  Verge failed: {e}")
         return []
@@ -269,11 +272,17 @@ def scrape_verge_ai():
 
 def scrape_venturebeat_ai():
     try:
-        return parse_rss("https://venturebeat.com/feed/", ai_filter=True)
+        return parse_rss("https://venturebeat.com/category/ai/feed/")
     except Exception as e:
         print(f"  VentureBeat failed: {e}")
         return []
 
+def scrape_zdnet_ai():
+    try:
+        return parse_rss("https://www.zdnet.com/topic/artificial-intelligence/rss.xml")
+    except Exception as e:
+        print(f"  ZDNet failed: {e}")
+        return []
 
 def scrape_nytimes_ai():
     try:
@@ -284,6 +293,12 @@ def scrape_nytimes_ai():
         print(f"  NYT failed: {e}")
         return []
 
+def scrape_arstechnica_ai():
+    try:
+        return parse_rss("https://arstechnica.com/ai/feed/")
+    except Exception as e:
+        print(f"  Ars Technica failed: {e}")
+        return []
 
 def scrape_mit_ai():
     try:
@@ -481,21 +496,22 @@ def scrape_siliconvalley_ai():
 
 # Map slug -> scraper function
 SCRAPERS = {
-    "techcrunch":    scrape_techcrunch_ai,
-    "rundown":       scrape_rundown_ai,
-    "verge":         scrape_verge_ai,
-    "venturebeat":   scrape_venturebeat_ai,
-    "nyt":           scrape_nytimes_ai,
-    "mit":           scrape_mit_ai,
-    # ── New sources ───────────────────────────────────────────────
-    "wired":         scrape_wired_ai,
-    "foxbusiness":   scrape_foxbusiness_ai,
-    "hackernews":    scrape_hackernews,
-    "bloomberg":     scrape_bloomberg_ai,
-    "techradar":     scrape_techradar_ai,
-    "siliconvalley": scrape_siliconvalley_ai,
+    "techcrunch":    scrape_techcrunch_ai,   # Best Source
+    "techradar":     scrape_techradar_ai,    # Really Good Source
+    "nyt":           scrape_nytimes_ai,      # Good Source
+    "mit":           scrape_mit_ai,          # Great, in depth source. Paywalled though
+    "wired":         scrape_wired_ai,        # Good Source
+    "arstechnica":   scrape_arstechnica_ai,  # idk yet
+    "zdnet":         scrape_zdnet_ai,        # idk yet
+    "bloomberg":     scrape_bloomberg_ai,    # Good Source
+    "foxbusiness":   scrape_foxbusiness_ai,  # Not great
+    "verge":         scrape_verge_ai,        # idk yet
+    "venturebeat":   scrape_venturebeat_ai,  # idk yet
+    "siliconvalley": scrape_siliconvalley_ai,# Solid source
+    "hackernews":    scrape_hackernews,      # N/A (not real news)
     # "cnbc":        scrape_cnbc_ai,   # TODO: needs Selenium — see placeholder in SOURCE_META
     # "wsj":         scrape_wsj_ai,    # TODO: needs Selenium — see placeholder in SOURCE_META
+    # "rundown":     scrape_rundown_ai,# TODO: needs Selenium — JS-rendered
 }
 
 
