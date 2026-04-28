@@ -1,0 +1,39 @@
+name: Briefing Monitor
+
+on:
+  schedule:
+    - cron: "0 15 * * *"  # 11 AM ET
+    - cron: "0 16 * * *"  # 12 PM ET
+    - cron: "0 17 * * *"  # 1 PM ET
+    - cron: "0 18 * * *"  # 2 PM ET
+    - cron: "0 19 * * *"  # 3 PM ET
+    - cron: "0 20 * * *"  # 4 PM ET
+    - cron: "0 21 * * *"  # 5 PM ET
+    - cron: "0 22 * * *"  # 6 PM ET
+  workflow_dispatch:
+
+jobs:
+  check-briefing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if today's briefing is published
+        id: check
+        run: |
+          DATE=$(TZ="America/New_York" date +'%Y-%m-%d')
+          URL="https://bboyett.github.io/ai-briefing/briefings/${DATE}.html"
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" "$URL")
+          echo "Checking $URL — status: $STATUS"
+          if [ "$STATUS" = "200" ]; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Trigger daily briefing if not published
+        if: steps.check.outputs.published == 'false'
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.WORKFLOW_PAT }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/bboyett/ai-briefing/actions/workflows/daily-briefing.yml/dispatches \
+            -d '{"ref":"main"}'
