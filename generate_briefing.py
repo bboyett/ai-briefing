@@ -9,8 +9,10 @@ Generates:
 """
 
 import os
+import re
 import json
 import requests
+import markdown as md
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -21,6 +23,38 @@ HEADERS = {
         "Chrome/120.0.0.0 Safari/537.36"
     )
 }
+
+# ── AI relevance filter (used for general-tech feeds that aren't already AI-only) ──
+AI_KEYWORDS = {
+    "ai", "artificial intelligence", "machine learning", "llm", "gpt",
+    "chatgpt", "openai", "anthropic", "deepmind", "neural", "model",
+    "chatbot", "generative", "automation", "robotics",
+}
+
+def is_ai_relevant(title, summary=""):
+    combined = (title + " " + summary).lower()
+    return any(kw in combined for kw in AI_KEYWORDS)
+
+
+# ── Advertisement / promo filter ────────────────────────────────────────────────
+# Some feeds (e.g. TechCrunch) mix in event promos and sponsored posts alongside
+# real articles. Filter those out so ads never get linked in a briefing.
+AD_CREATORS = {
+    "techcrunch events", "techcrunch brand studio", "sponsored content",
+    "partner content", "brand studio",
+}
+AD_TITLE_PATTERN = re.compile(
+    r"(disrupt\s?\d{4}|buy (your )?(tickets|pass)|book your ticket|"
+    r"save \$\d|\d+%\s*off|early bird|last chance to save|promo code|"
+    r"presented by|sponsored content|partner content|"
+    r"exhibit(or)? (table|package)|advertisement)",
+    re.I,
+)
+
+def is_advertisement(title, creator=""):
+    if creator and creator.strip().lower() in AD_CREATORS:
+        return True
+    return bool(AD_TITLE_PATTERN.search(title))
 
 # ── Source Registry ────────────────────────────────────────────────────────────
 # Every possible source. Add new ones here — if scraping fails, it just won't appear.
@@ -101,6 +135,7 @@ SOURCE_META = {
         "name": "NYT Technology",
         "slug": "nyt",
         "color": "#2c2c2c",
+        "paywalled": True,
         "url": "https://www.nytimes.com/section/technology",
         "description": (
             "The New York Times Technology section provides in-depth reporting on the "
@@ -162,6 +197,7 @@ SOURCE_META = {
         "name": "Bloomberg Technology",
         "slug": "bloomberg",
         "color": "#1b1464",
+        "paywalled": True,
         "url": "https://www.bloomberg.com/technology",
         "description": (
             "Bloomberg Technology covers the business of tech with a focus on markets, "
@@ -212,6 +248,7 @@ def parse_rss(url, limit=6, ai_filter=False):
     """
     Generic RSS parser. Returns list of {title, link, summary} dicts.
     If ai_filter=True, only includes items whose category contains AI-related terms.
+    Skips items that look like ads/event promos (see is_advertisement).
     """
     stories = []
     try:
@@ -228,6 +265,11 @@ def parse_rss(url, limit=6, ai_filter=False):
             title = title_tag.get_text(strip=True)
             link = link_tag.get_text(strip=True)
 
+            creator_tag = item.find("dc:creator")
+            creator = creator_tag.get_text(strip=True) if creator_tag else ""
+            if is_advertisement(title, creator):
+                continue
+
             if ai_filter:
                 cats = [c.get_text(strip=True).lower() for c in item.find_all("category")]
                 if not any("ai" in c or "machine learning" in c or "artificial" in c for c in cats):
@@ -237,6 +279,54 @@ def parse_rss(url, limit=6, ai_filter=False):
             if desc_tag:
                 desc_soup = BeautifulSoup(desc_tag.get_text(), "html.parser")
                 summary = desc_soup.get_text(strip=True)[:220]
+
+            if len(title) > 5:
+                stories.append({"title": title[:120], "link": link, "summary": summary})
+
+            if len(stories) >= limit:
+                break
+    except Exception as e:
+        raise e
+    return stories
+
+
+def parse_atom(url, limit=6, keyword_filter=None):
+    """
+    Generic Atom feed parser (feeds using <entry>/<link href=.../> rather than
+    RSS's <item>/<link>text</link>). Returns list of {title, link, summary} dicts.
+    If keyword_filter is set, only includes items whose title+summary match is_ai_relevant.
+    Skips items that look like ads/event promos.
+    """
+    stories = []
+    try:
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        soup = BeautifulSoup(resp.text, "xml")
+        for entry in soup.find_all("entry"):
+            title_tag = entry.find("title")
+            link_tag = entry.find("link")
+            summary_tag = entry.find("summary") or entry.find("content")
+
+            if not title_tag or not link_tag or not link_tag.get("href"):
+                continue
+
+            title = title_tag.get_text(strip=True)
+            link = link_tag.get("href").strip()
+
+            author_tag = entry.find("author")
+            creator = ""
+            if author_tag:
+                name_tag = author_tag.find("name")
+                creator = name_tag.get_text(strip=True) if name_tag else ""
+            if is_advertisement(title, creator):
+                continue
+
+            summary = ""
+            if summary_tag:
+                summary_soup = BeautifulSoup(summary_tag.get_text(), "html.parser")
+                summary = summary_soup.get_text(strip=True)[:220]
+
+            if keyword_filter and not is_ai_relevant(title, summary):
+                continue
 
             if len(title) > 5:
                 stories.append({"title": title[:120], "link": link, "summary": summary})
@@ -263,23 +353,32 @@ def scrape_techcrunch_ai():
 
 
 def scrape_verge_ai():
+    """The Verge's feeds moved from RSS to Atom format, which is why this
+    previously returned nothing — parse_atom() understands <entry> tags."""
     try:
-        return parse_rss("https://www.theverge.com/rss/index.xml", ai_filter=True)
+        return parse_atom("https://www.theverge.com/rss/ai-artificial-intelligence/index.xml")
     except Exception as e:
         print(f"  Verge failed: {e}")
         return []
 
 
 def scrape_venturebeat_ai():
+    """VentureBeat's category/ai/feed endpoint stopped updating (it was stuck
+    serving articles months old). Their main feed is fresh, so pull from there
+    and filter down to AI-relevant stories instead."""
     try:
-        return parse_rss("https://venturebeat.com/category/ai/feed/")
+        stories = parse_rss("https://venturebeat.com/feed/", limit=20)
+        return [s for s in stories if is_ai_relevant(s["title"], s["summary"])][:6]
     except Exception as e:
         print(f"  VentureBeat failed: {e}")
         return []
 
 def scrape_zdnet_ai():
+    """ZDNet's /topic/artificial-intelligence/rss.xml now just mirrors their
+    general news feed instead of filtering to AI, so filter it ourselves."""
     try:
-        return parse_rss("https://www.zdnet.com/topic/artificial-intelligence/rss.xml")
+        stories = parse_rss("https://www.zdnet.com/topic/artificial-intelligence/rss.xml", limit=20)
+        return [s for s in stories if is_ai_relevant(s["title"], s["summary"])][:6]
     except Exception as e:
         print(f"  ZDNet failed: {e}")
         return []
@@ -331,7 +430,7 @@ def scrape_wired_ai():
             # Title is usually in an <h3> or <h2> inside the link, or the link text itself
             heading = a.find(["h2", "h3"])
             title = heading.get_text(strip=True) if heading else a.get_text(strip=True)[:120]
-            if len(title) > 10:
+            if len(title) > 10 and not is_advertisement(title):
                 seen.add(href)
                 stories.append({"title": title[:120], "link": href, "summary": ""})
             if len(stories) >= 6:
@@ -365,7 +464,7 @@ def scrape_foxbusiness_ai():
                 h = a.find("h3")
                 title = h.get_text(strip=True) if h else ""
             full_url = "https://www.foxbusiness.com" + href
-            if full_url not in seen and len(title) > 10:
+            if full_url not in seen and len(title) > 10 and not is_advertisement(title):
                 seen.add(full_url)
                 stories.append({"title": title[:120], "link": full_url, "summary": ""})
             if len(stories) >= 6:
@@ -378,7 +477,7 @@ def scrape_foxbusiness_ai():
 def scrape_hackernews():
     """Hacker News — RSS feed (robots.txt disallows but not technically blocked)."""
     try:
-        return parse_rss("https://news.ycombinator.com/rss", limit=6, ai_filter=False)
+        return parse_rss("https://news.ycombinator.com/rss", limit=6)
     except Exception as e:
         print(f"  Hacker News failed: {e}")
         return []
@@ -386,11 +485,6 @@ def scrape_hackernews():
 
 def scrape_bloomberg_ai():
     """Bloomberg Technology — RSS feed with keyword AI filter."""
-    AI_KEYWORDS = {
-        "ai", "artificial intelligence", "machine learning", "llm", "gpt",
-        "chatgpt", "openai", "anthropic", "deepmind", "neural", "model",
-        "chatbot", "generative", "automation", "robotics",
-    }
     stories = []
     try:
         resp = requests.get(
@@ -406,12 +500,13 @@ def scrape_bloomberg_ai():
                 continue
             title = title_tag.get_text(strip=True)
             link = link_tag.get_text(strip=True)
+            if is_advertisement(title):
+                continue
             summary = ""
             if desc_tag:
                 summary = BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True)[:220]
             # Only keep if title or summary mentions AI
-            combined = (title + " " + summary).lower()
-            if not any(kw in combined for kw in AI_KEYWORDS):
+            if not is_ai_relevant(title, summary):
                 continue
             if len(title) > 5:
                 stories.append({"title": title[:120], "link": link, "summary": summary})
@@ -424,11 +519,6 @@ def scrape_bloomberg_ai():
 
 def scrape_techradar_ai():
     """TechRadar — RSS feed with keyword AI filter."""
-    AI_KEYWORDS = {
-        "ai", "artificial intelligence", "machine learning", "llm", "gpt",
-        "chatgpt", "openai", "anthropic", "deepmind", "neural", "model",
-        "chatbot", "generative", "automation", "robotics",
-    }
     stories = []
     try:
         resp = requests.get(
@@ -444,11 +534,12 @@ def scrape_techradar_ai():
                 continue
             title = title_tag.get_text(strip=True)
             link = link_tag.get_text(strip=True)
+            if is_advertisement(title):
+                continue
             summary = ""
             if desc_tag:
                 summary = BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True)[:220]
-            combined = (title + " " + summary).lower()
-            if not any(kw in combined for kw in AI_KEYWORDS):
+            if not is_ai_relevant(title, summary):
                 continue
             if len(title) > 5:
                 stories.append({"title": title[:120], "link": link, "summary": summary})
@@ -461,11 +552,6 @@ def scrape_techradar_ai():
 
 def scrape_siliconvalley_ai():
     """Silicon Valley News — scrape the technology page directly with AI keyword filter."""
-    AI_KEYWORDS = {
-        "ai", "artificial intelligence", "machine learning", "llm", "gpt",
-        "chatgpt", "openai", "anthropic", "deepmind", "neural", "model",
-        "chatbot", "generative", "automation", "robotics",
-    }
     stories = []
     try:
         resp = requests.get(
@@ -482,8 +568,7 @@ def scrape_siliconvalley_ai():
             title = heading.get_text(strip=True) if heading else a.get_text(strip=True)[:120]
             if len(title) < 10 or href in seen:
                 continue
-            combined = title.lower()
-            if not any(kw in combined for kw in AI_KEYWORDS):
+            if not is_ai_relevant(title) or is_advertisement(title):
                 continue
             seen.add(href)
             stories.append({"title": title[:120], "link": href, "summary": ""})
@@ -610,6 +695,8 @@ def topnav(depth=0, active=None):
     links = [
         f'<a href="{prefix}index.html" class="{"active" if active=="briefings" else ""}">All Briefings</a>',
         f'<a href="{prefix}sources.html" class="{"active" if active=="sources" else ""}">Sources</a>',
+        f'<a href="{prefix}blog/index.html" class="{"active" if active=="blog" else ""}">Blog</a>',
+        f'<a href="{prefix}search.html" class="{"active" if active=="search" else ""}">Search</a>',
     ]
     return f'<nav class="topnav">{"".join(links)}</nav>'
 
@@ -630,17 +717,19 @@ def build_briefing_page(date_str, display_date, results):
         meta = SOURCE_META[slug]
         color = meta["color"]
         name = meta["name"]
+        paywall_badge = (
+            '<span class="paywall-badge">🔒 Subscription may be required</span>'
+            if meta.get("paywalled") else ""
+        )
 
         items_html = ""
         for s in stories:
             excerpt = f'<p class="excerpt">{s["summary"]}</p>' if s.get("summary") else ""
-            paywall_badge = '<span class="paywall-badge">🔒 Subscription may be required</span>' if SOURCE_META[slug].get("paywalled") else ""
             items_html += f"""
             <article class="story">
               <a class="story-link" href="{s['link']}" target="_blank" rel="noopener">
                 <h3 class="story-title">{s['title']}</h3>
               </a>
-              {paywall_badge}
               {excerpt}
             </article>"""
 
@@ -650,6 +739,7 @@ def build_briefing_page(date_str, display_date, results):
             <h2 class="source-name" style="color:{color}">{name}</h2>
             <a class="source-link" href="../sources/{slug}.html">View all →</a>
           </div>
+          {paywall_badge}
           <div class="source-rule" style="background:{color}"></div>
           <div class="stories">{items_html}</div>
         </section>"""
@@ -968,6 +1058,13 @@ def build_source_page(slug, entries):
 {SHARED_CSS}
 
 .masthead h1 {{ color: {color}; }}
+.paywall-badge {{
+  display: inline-block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 10px;
+  letter-spacing: 0.03em;
+}}
 .source-desc {{
   font-size: 15px;
   color: var(--muted);
@@ -1018,6 +1115,7 @@ def build_source_page(slug, entries):
   <header class="masthead">
     <p class="masthead-label">Source Archive</p>
     <h1>{name}</h1>
+    {'<span class="paywall-badge">🔒 Subscription may be required</span>' if meta.get('paywalled') else ''}
   </header>
 
   <p class="source-desc">{meta['description']}</p>
@@ -1036,6 +1134,215 @@ def build_source_page(slug, entries):
   {date_groups or '<p style="color:var(--muted);font-style:italic">No articles yet.</p>'}
 
   <footer class="footer">{name} · Daily AI Briefing Archive</footer>
+</div>
+</body>
+</html>"""
+
+
+# ── Blog ───────────────────────────────────────────────────────────────────────
+# Posts are plain markdown files in blog_posts/ — drop a new .md file in there
+# (see blog_posts/about.md for the header format) and it gets picked up and
+# published automatically next time this script runs.
+
+BLOG_POSTS_DIR = "blog_posts"
+
+
+def load_blog_posts(posts_dir=BLOG_POSTS_DIR):
+    """Parse every blog_posts/*.md file (except about.md) into a post dict."""
+    posts = []
+    if not os.path.isdir(posts_dir):
+        return posts
+    for fname in sorted(os.listdir(posts_dir)):
+        if not fname.endswith(".md") or fname.lower() in ("about.md", "readme.md"):
+            continue
+        with open(os.path.join(posts_dir, fname), encoding="utf-8") as f:
+            text = f.read()
+
+        header_text, sep, body = text.partition("\n---\n")
+        if not sep:
+            print(f"  Skipping {fname}: missing '---' header separator")
+            continue
+
+        meta = {}
+        for line in header_text.strip().splitlines():
+            key, colon, val = line.partition(":")
+            if colon:
+                meta[key.strip().lower()] = val.strip()
+
+        date_str = meta.get("date", "")
+        try:
+            display_date = datetime.strptime(date_str, "%Y-%m-%d").strftime("%B %d, %Y")
+        except ValueError:
+            display_date = date_str
+
+        posts.append({
+            "slug": os.path.splitext(fname)[0],
+            "title": meta.get("title", fname),
+            "date_str": date_str,
+            "display_date": display_date,
+            "summary": meta.get("summary", ""),
+            "content_html": md.markdown(body.strip(), extensions=["extra"]),
+        })
+
+    posts.sort(key=lambda p: p["date_str"], reverse=True)
+    return posts
+
+
+def load_about_html(posts_dir=BLOG_POSTS_DIR):
+    path = os.path.join(posts_dir, "about.md")
+    if not os.path.exists(path):
+        return ""
+    with open(path, encoding="utf-8") as f:
+        return md.markdown(f.read().strip(), extensions=["extra"])
+
+
+BLOG_POST_CSS = """
+.post-content { font-size: 16px; line-height: 1.7; }
+.post-content p { margin-bottom: 16px; }
+.post-content h1, .post-content h2, .post-content h3 {
+  font-family: 'Playfair Display', serif;
+  margin: 28px 0 12px;
+}
+.post-content ul, .post-content ol { margin: 0 0 16px 24px; }
+.post-content a { color: var(--accent); border-bottom: 1px dotted var(--accent); }
+.post-content blockquote {
+  border-left: 3px solid var(--rule);
+  padding-left: 16px;
+  color: var(--muted);
+  margin: 16px 0;
+}
+.post-content code {
+  background: var(--cream);
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+.post-content pre {
+  background: var(--cream);
+  padding: 14px 16px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+"""
+
+
+def build_blog_index_page(posts, about_html):
+    post_items = "".join(f"""
+        <a class="entry" href="{p['slug']}.html">
+          <div class="entry-main">
+            <span class="entry-date">{p['title']}</span>
+            <div class="entry-sources"><span class="src-tag">{p['display_date']}</span></div>
+            {f'<p style="margin-top:8px;font-size:14px;color:var(--muted)">{p["summary"]}</p>' if p.get('summary') else ''}
+          </div>
+          <span class="entry-arrow">→</span>
+        </a>""" for p in posts)
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog — Daily AI Briefing</title>
+  <meta name="description" content="Ben's blog — commentary on AI news and things learned while using AI day to day.">
+  <style>
+{SHARED_CSS}
+{BLOG_POST_CSS}
+
+.page-wrap {{ max-width: 680px; }}
+.about-box {{
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 24px 28px;
+  margin-bottom: 48px;
+}}
+.about-box .post-content {{ font-size: 15px; }}
+.about-box .post-content p:last-child {{ margin-bottom: 0; }}
+.section-label {{
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}}
+.entry-list {{ display: flex; flex-direction: column; gap: 2px; }}
+.entry {{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--cream);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: border-color 0.15s, background 0.15s;
+}}
+.entry:hover {{ border-color: var(--rule); background: #fff; text-decoration: none; }}
+.entry-main {{ flex: 1; }}
+.entry-date {{ font-size: 16px; font-weight: 500; display: block; font-family: 'Playfair Display', serif; }}
+.entry-sources {{ margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px; }}
+.src-tag {{
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  background: var(--rule);
+  color: var(--muted);
+  padding: 2px 6px;
+  border-radius: 2px;
+}}
+.entry-arrow {{ color: var(--muted); font-size: 16px; transition: color 0.15s, transform 0.15s; }}
+.entry:hover .entry-arrow {{ color: var(--accent); transform: translateX(4px); }}
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  {topnav(depth=1, active="blog")}
+
+  <header class="masthead">
+    <p class="masthead-label">Ben's Blog</p>
+    <h1>Notes &amp; Commentary</h1>
+  </header>
+
+  <div class="about-box">
+    <p class="section-label">About Me</p>
+    <div class="post-content">{about_html or '<p>Add blog_posts/about.md to introduce yourself here.</p>'}</div>
+  </div>
+
+  <p class="section-label">{len(posts)} post{'s' if len(posts) != 1 else ''}</p>
+  <div class="entry-list">
+    {post_items or '<p style="color:var(--muted);font-style:italic">No posts yet — add a markdown file to blog_posts/ to publish one.</p>'}
+  </div>
+
+  <footer class="footer">Ben's Blog · Daily AI Briefing</footer>
+</div>
+</body>
+</html>"""
+
+
+def build_blog_post_page(post):
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{post['title']} — Ben's Blog</title>
+  <meta name="description" content="{post.get('summary') or post['title']}">
+  <style>
+{SHARED_CSS}
+{BLOG_POST_CSS}
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  {topnav(depth=1, active="blog")}
+
+  <header class="masthead">
+    <p class="masthead-label">{post['display_date']}</p>
+    <h1>{post['title']}</h1>
+  </header>
+
+  <div class="post-content">{post['content_html']}</div>
+
+  <footer class="footer"><a href="index.html">← Back to Blog</a></footer>
 </div>
 </body>
 </html>"""
@@ -1060,11 +1367,169 @@ def save_json(path, data):
 
 
 
+# ── Search ─────────────────────────────────────────────────────────────────────
+
+def build_search_index(source_data):
+    """Flatten source_data.json into one list of articles for client-side search."""
+    index = []
+    for slug, day_entries in source_data.items():
+        meta = SOURCE_META.get(slug)
+        if not meta:
+            continue
+        for e in day_entries:
+            for a in e.get("articles", []):
+                index.append({
+                    "title": a["title"],
+                    "link": a["link"],
+                    "summary": a.get("summary", ""),
+                    "source": slug,
+                    "source_name": meta["name"],
+                    "date": e["date_str"],
+                    "display_date": e["display_date"],
+                    "paywalled": bool(meta.get("paywalled")),
+                })
+    index.sort(key=lambda x: x["date"], reverse=True)
+    return index
+
+
+def build_search_page(used_sources):
+    checkboxes = "".join(
+        f'<label class="src-check"><input type="checkbox" value="{slug}"> {SOURCE_META[slug]["name"]}</label>'
+        for slug in sorted(used_sources, key=lambda s: SOURCE_META[s]["name"])
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search — Daily AI Briefing</title>
+  <meta name="description" content="Search every article ever featured in the Daily AI Briefing, by keyword, source, or date.">
+  <style>
+{SHARED_CSS}
+
+.page-wrap {{ max-width: 760px; }}
+.search-box {{ display: flex; gap: 8px; margin-bottom: 12px; }}
+.search-box input[type="text"] {{
+  flex: 1;
+  font: inherit;
+  font-size: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--ink);
+}}
+.search-box button {{
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0 20px;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}}
+.search-box button:hover {{ opacity: 0.9; }}
+
+.advanced-toggle {{
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+  text-decoration: underline dotted;
+}}
+.advanced-toggle:hover {{ color: var(--accent); }}
+
+.advanced-panel {{
+  display: none;
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-bottom: 32px;
+  gap: 20px;
+}}
+.advanced-panel.open {{ display: flex; flex-wrap: wrap; }}
+.advanced-field {{ display: flex; flex-direction: column; gap: 6px; min-width: 160px; }}
+.advanced-field.sources-field {{ flex: 1 1 100%; }}
+.advanced-field label.field-label {{
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}}
+.advanced-field input[type="date"] {{
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}}
+.source-checks {{ display: flex; flex-wrap: wrap; gap: 6px 16px; }}
+.src-check {{ font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer; }}
+
+.results-meta {{ font-size: 13px; color: var(--muted); margin-bottom: 16px; }}
+.result {{ margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dotted var(--rule); }}
+.result:last-child {{ border-bottom: none; }}
+.result-title {{ font-size: 16px; font-weight: 500; line-height: 1.4; }}
+.result-title:hover {{ color: var(--accent); }}
+.result-meta {{ font-size: 12px; color: var(--muted); margin-top: 4px; letter-spacing: 0.02em; }}
+.result-excerpt {{ font-size: 14px; color: var(--muted); margin-top: 6px; line-height: 1.55; }}
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  {topnav(depth=0, active="search")}
+
+  <header class="masthead">
+    <p class="masthead-label">Search</p>
+    <h1>Find an article</h1>
+    <p class="masthead-sub" style="margin-top:12px;font-size:15px;color:var(--muted)">Search across every briefing ever published, by keyword, source, or date.</p>
+  </header>
+
+  <form id="search-form">
+    <div class="search-box">
+      <input type="text" id="q" placeholder="Search titles, summaries, or source names…" autocomplete="off">
+      <button type="submit">Search</button>
+    </div>
+    <button type="button" class="advanced-toggle" id="advanced-toggle">Advanced options ▾</button>
+    <div class="advanced-panel" id="advanced-panel">
+      <div class="advanced-field">
+        <label class="field-label" for="date-from">From date</label>
+        <input type="date" id="date-from">
+      </div>
+      <div class="advanced-field">
+        <label class="field-label" for="date-to">To date (or same as From for a single day)</label>
+        <input type="date" id="date-to">
+      </div>
+      <div class="advanced-field sources-field">
+        <label class="field-label">News sites (none checked = all)</label>
+        <div class="source-checks">{checkboxes}</div>
+      </div>
+    </div>
+  </form>
+
+  <p class="results-meta" id="results-meta">Loading article index…</p>
+  <div id="results"></div>
+
+  <footer class="footer">Daily AI Briefing · Search</footer>
+</div>
+<script src="search.js" defer></script>
+</body>
+</html>"""
+
+
 # ── Sitemap ────────────────────────────────────────────────────────────────────
 
-def build_sitemap(entries, base_url="https://bboyett.github.io/ai-briefing"):
+def build_sitemap(entries, blog_posts, base_url="https://bboyett.github.io/ai-briefing"):
     today = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+00:00")
-    
+
     def url_block(loc, priority):
         return f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{today}</lastmod>\n    <priority>{priority}</priority>\n  </url>"
 
@@ -1074,12 +1539,18 @@ def build_sitemap(entries, base_url="https://bboyett.github.io/ai-briefing"):
     blocks.append(url_block(f"{base_url}/index.html", "0.80"))
     # Sources index
     blocks.append(url_block(f"{base_url}/sources.html", "0.80"))
+    # Blog + Search
+    blocks.append(url_block(f"{base_url}/blog/index.html", "0.70"))
+    blocks.append(url_block(f"{base_url}/search.html", "0.60"))
     # Each daily briefing
     for e in entries:
         blocks.append(url_block(f"{base_url}/briefings/{e['date_str']}.html", "0.80"))
     # Each per-source page
     for slug in SOURCE_META:
         blocks.append(url_block(f"{base_url}/sources/{slug}.html", "0.64"))
+    # Each blog post
+    for p in blog_posts:
+        blocks.append(url_block(f"{base_url}/blog/{p['slug']}.html", "0.60"))
 
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -1169,8 +1640,29 @@ if __name__ == "__main__":
             f.write(build_source_page(slug, source_data[slug]))
         print(f"  Written: sources/{slug}.html")
 
-        with open("sitemap.xml", "w", encoding="utf-8") as f:
-            f.write(build_sitemap(entries))
-        print("  Written: sitemap.xml")
+    # 8. Rebuild blog (index + individual posts)
+    os.makedirs("blog", exist_ok=True)
+    blog_posts = load_blog_posts()
+    about_html = load_about_html()
+    with open("blog/index.html", "w", encoding="utf-8") as f:
+        f.write(build_blog_index_page(blog_posts, about_html))
+    print("  Written: blog/index.html")
+    for post in blog_posts:
+        with open(f"blog/{post['slug']}.html", "w", encoding="utf-8") as f:
+            f.write(build_blog_post_page(post))
+        print(f"  Written: blog/{post['slug']}.html")
 
-    print("\nDone! ✅")
+    # 9. Rebuild search index + search page
+    search_index = build_search_index(source_data)
+    save_json("search_index.json", search_index)
+    print(f"  Written: search_index.json ({len(search_index)} articles)")
+    with open("search.html", "w", encoding="utf-8") as f:
+        f.write(build_search_page(all_used_sources))
+    print("  Written: search.html")
+
+    # 10. Rebuild sitemap.xml
+    with open("sitemap.xml", "w", encoding="utf-8") as f:
+        f.write(build_sitemap(entries, blog_posts))
+    print("  Written: sitemap.xml")
+
+    print("\nDone!")

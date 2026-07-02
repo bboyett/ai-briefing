@@ -198,4 +198,4 @@ if __name__ == "__main__":
         f.write(rebuild_index_with_tests(entries, test_entries))
     print("  Rebuilt: index.html (test section updated)")
 
-    print(f"\nDone! ✅  Open briefings/{file_slug}.html to review.")
+    print(f"\nDone! Open briefings/{file_slug}.html to review.")

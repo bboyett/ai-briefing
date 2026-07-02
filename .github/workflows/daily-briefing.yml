@@ -29,7 +29,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4 lxml
+        run: pip install requests beautifulsoup4 lxml markdown
 
       - name: Generate today's briefing
         run: python generate_briefing.py
@@ -38,6 +38,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html briefings/ entries.json sources.html sources/ source_data.json
+          git add index.html briefings/ entries.json sources.html sources/ source_data.json blog/ search.html search.js search_index.json sitemap.xml
           git diff --staged --quiet || git commit -m "Briefing: $(date +'%B %d, %Y')"
+          git pull --rebase origin main
           git push
