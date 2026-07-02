@@ -10,6 +10,7 @@ Generates:
 
 import os
 import re
+import html
 import json
 import requests
 import markdown as md
@@ -262,7 +263,7 @@ def parse_rss(url, limit=6, ai_filter=False):
             if not title_tag or not link_tag:
                 continue
 
-            title = title_tag.get_text(strip=True)
+            title = html.unescape(title_tag.get_text(strip=True))
             link = link_tag.get_text(strip=True)
 
             creator_tag = item.find("dc:creator")
@@ -278,7 +279,7 @@ def parse_rss(url, limit=6, ai_filter=False):
             summary = ""
             if desc_tag:
                 desc_soup = BeautifulSoup(desc_tag.get_text(), "html.parser")
-                summary = desc_soup.get_text(strip=True)[:220]
+                summary = html.unescape(desc_soup.get_text(strip=True))[:220]
 
             if len(title) > 5:
                 stories.append({"title": title[:120], "link": link, "summary": summary})
@@ -309,7 +310,7 @@ def parse_atom(url, limit=6, keyword_filter=None):
             if not title_tag or not link_tag or not link_tag.get("href"):
                 continue
 
-            title = title_tag.get_text(strip=True)
+            title = html.unescape(title_tag.get_text(strip=True))
             link = link_tag.get("href").strip()
 
             author_tag = entry.find("author")
@@ -323,7 +324,7 @@ def parse_atom(url, limit=6, keyword_filter=None):
             summary = ""
             if summary_tag:
                 summary_soup = BeautifulSoup(summary_tag.get_text(), "html.parser")
-                summary = summary_soup.get_text(strip=True)[:220]
+                summary = html.unescape(summary_soup.get_text(strip=True))[:220]
 
             if keyword_filter and not is_ai_relevant(title, summary):
                 continue
@@ -429,7 +430,7 @@ def scrape_wired_ai():
                 continue
             # Title is usually in an <h3> or <h2> inside the link, or the link text itself
             heading = a.find(["h2", "h3"])
-            title = heading.get_text(strip=True) if heading else a.get_text(strip=True)[:120]
+            title = html.unescape(heading.get_text(strip=True) if heading else a.get_text(strip=True)[:120])
             if len(title) > 10 and not is_advertisement(title):
                 seen.add(href)
                 stories.append({"title": title[:120], "link": href, "summary": ""})
@@ -458,11 +459,11 @@ def scrape_foxbusiness_ai():
             if not href.startswith("/technology/"):
                 continue
             # aria-label carries the clean title on Fox Business
-            title = a.get("aria-label", "").strip()
+            title = html.unescape(a.get("aria-label", "").strip())
             if not title:
                 # Fallback: look for an <h3> inside the link
                 h = a.find("h3")
-                title = h.get_text(strip=True) if h else ""
+                title = html.unescape(h.get_text(strip=True)) if h else ""
             full_url = "https://www.foxbusiness.com" + href
             if full_url not in seen and len(title) > 10 and not is_advertisement(title):
                 seen.add(full_url)
@@ -498,13 +499,13 @@ def scrape_bloomberg_ai():
             desc_tag = item.find("description")
             if not title_tag or not link_tag:
                 continue
-            title = title_tag.get_text(strip=True)
+            title = html.unescape(title_tag.get_text(strip=True))
             link = link_tag.get_text(strip=True)
             if is_advertisement(title):
                 continue
             summary = ""
             if desc_tag:
-                summary = BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True)[:220]
+                summary = html.unescape(BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True))[:220]
             # Only keep if title or summary mentions AI
             if not is_ai_relevant(title, summary):
                 continue
@@ -532,13 +533,13 @@ def scrape_techradar_ai():
             desc_tag = item.find("description")
             if not title_tag or not link_tag:
                 continue
-            title = title_tag.get_text(strip=True)
+            title = html.unescape(title_tag.get_text(strip=True))
             link = link_tag.get_text(strip=True)
             if is_advertisement(title):
                 continue
             summary = ""
             if desc_tag:
-                summary = BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True)[:220]
+                summary = html.unescape(BeautifulSoup(desc_tag.get_text(), "html.parser").get_text(strip=True))[:220]
             if not is_ai_relevant(title, summary):
                 continue
             if len(title) > 5:
@@ -565,7 +566,7 @@ def scrape_siliconvalley_ai():
             if not href.startswith("https://www.siliconvalley.com/2"):
                 continue
             heading = a.find(["h2", "h3"])
-            title = heading.get_text(strip=True) if heading else a.get_text(strip=True)[:120]
+            title = html.unescape(heading.get_text(strip=True) if heading else a.get_text(strip=True)[:120])
             if len(title) < 10 or href in seen:
                 continue
             if not is_ai_relevant(title) or is_advertisement(title):
@@ -1370,15 +1371,18 @@ def save_json(path, data):
 # ── Search ─────────────────────────────────────────────────────────────────────
 
 def build_search_index(source_data):
-    """Flatten source_data.json into one list of articles for client-side search."""
-    index = []
+    """Flatten source_data.json into a deduped list of articles for client-side search.
+    The same story often gets re-pulled by a source across many days (that's kept in the
+    daily briefings on purpose), but search should only surface the latest occurrence of
+    each one — so dedupe by (source, title), keeping whichever has the newest date."""
+    latest_by_key = {}
     for slug, day_entries in source_data.items():
         meta = SOURCE_META.get(slug)
         if not meta:
             continue
         for e in day_entries:
             for a in e.get("articles", []):
-                index.append({
+                item = {
                     "title": a["title"],
                     "link": a["link"],
                     "summary": a.get("summary", ""),
@@ -1387,7 +1391,13 @@ def build_search_index(source_data):
                     "date": e["date_str"],
                     "display_date": e["display_date"],
                     "paywalled": bool(meta.get("paywalled")),
-                })
+                }
+                key = (slug, a["title"].strip().lower())
+                existing = latest_by_key.get(key)
+                if not existing or item["date"] > existing["date"]:
+                    latest_by_key[key] = item
+
+    index = list(latest_by_key.values())
     index.sort(key=lambda x: x["date"], reverse=True)
     return index
 
