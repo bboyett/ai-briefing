@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Briefing — July 31, 2026</title>
+  <meta name="description" content="Your daily AI news digest for July 31, 2026, featuring stories from TechCrunch AI, TechRadar, NYT Technology, MIT Technology Review, Wired, Ars Technica AI, ZDNet AI, Bloomberg Technology, Fox Business Technology, The Verge, VentureBeat, Silicon Valley News, Hacker News.">
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:    #1a1410;
+  --paper:  #f7f3ec;
+  --cream:  #ede8df;
+  --accent: #c0392b;
+  --muted:  #7a6f65;
+  --rule:   #c8bfb0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.page-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.topnav {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+}
+.topnav a { color: var(--muted); }
+.topnav a:hover { color: var(--accent); text-decoration: none; }
+.topnav a.active { color: var(--ink); font-weight: 500; }
+
+.masthead { margin-bottom: 48px; }
+.masthead-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.masthead h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+.masthead-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+  color: var(--accent);
+  font-size: 18px;
+}
+.masthead-rule::before,
+.masthead-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.footer {
+  text-align: center;
+  padding-top: 40px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  border-top: 1px solid var(--rule);
+  margin-top: 60px;
+}
+
+
+.masthead { text-align: center; }
+
+.paywall-badge {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 0.03em;
+}
+
+.toc {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-bottom: 48px;
+}
+.toc-title {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.toc a { font-size: 14px; border-bottom: 1px dotted var(--rule); }
+.toc a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+
+.source { margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--rule); }
+.source:last-of-type { border-bottom: none; }
+
+.source-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.source-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.source-rule { height: 2px; margin-bottom: 20px; }
+.source-link { font-size: 12px; color: var(--muted); }
+.source-link:hover { color: var(--accent); text-decoration: none; }
+
+.story { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dotted var(--rule); }
+.story:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.story-title { font-size: 16px; font-weight: 500; line-height: 1.4; transition: color 0.15s; }
+.story-link:hover .story-title { color: var(--accent); }
+.excerpt { font-size: 14px; color: var(--muted); margin-top: 6px; line-height: 1.55; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <nav class="topnav"><a href="../index.html" class="active">All Briefings</a><a href="../sources.html" class="">Sources</a><a href="../blog/index.html" class="">Blog</a><a href="../search.html" class="">Search</a></nav>
+
+  <header class="masthead">
+    <p class="masthead-label">Daily AI Briefing</p>
+    <h1>July 31, 2026</h1>
+    <div class="masthead-rule">✦</div>
+  </header>
+
+  <nav class="toc">
+    <p class="toc-title">In this issue</p>
+    <ul><li><a href="#techcrunch">TechCrunch AI</a></li><li><a href="#techradar">TechRadar</a></li><li><a href="#nyt">NYT Technology</a></li><li><a href="#mit">MIT Technology Review</a></li><li><a href="#wired">Wired</a></li><li><a href="#arstechnica">Ars Technica AI</a></li><li><a href="#zdnet">ZDNet AI</a></li><li><a href="#bloomberg">Bloomberg Technology</a></li><li><a href="#foxbusiness">Fox Business Technology</a></li><li><a href="#verge">The Verge</a></li><li><a href="#venturebeat">VentureBeat</a></li><li><a href="#siliconvalley">Silicon Valley News</a></li><li><a href="#hackernews">Hacker News</a></li></ul>
+  </nav>
+
+  
+        <section class="source" id="techcrunch">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#2c3e6b">TechCrunch AI</h2>
+            <a class="source-link" href="../sources/techcrunch.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#2c3e6b"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/" target="_blank" rel="noopener">
+                <h3 class="story-title">Anthropic says its own AI models breached three companies during security tests</h3>
+              </a>
+              <p class="excerpt">After OpenAI's models broke into Hugging Face, Anthropic checked its own history and found three similar incidents</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/07/30/ai-hedge-fund-situational-awareness-may-have-sold-its-public-portfolio-but-it-still-has-its-anthropic-shares/" target="_blank" rel="noopener">
+                <h3 class="story-title">AI hedge fund Situational Awareness may have sold its public portfolio, but it still has its Anthropic shares</h3>
+              </a>
+              <p class="excerpt">The former OpenAI researcher’s fund was forced to unwind public equities after leveraged public bets plummeted. But he still has cards to play.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/07/30/reddit-reports-a-solid-quarter-but-shows-signs-of-ais-impact/" target="_blank" rel="noopener">
+                <h3 class="story-title">Reddit reports a solid quarter but shows signs of AI’s impact</h3>
+              </a>
+              <p class="excerpt">Reddit's financial situation is looking good but uncertainty about its relationship to Google and the new AI-ified web are stirring market concerns.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/07/30/investors-love-ai-as-long-as-youre-a-cloud-host/" target="_blank" rel="noopener">
+                <h3 class="story-title">Investors love AI, as long as you’re a cloud host</h3>
+              </a>
+              <p class="excerpt">Amazon isn't slowing down on data center spending — but investors don't seem to mind.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/07/30/judge-says-trump-admin-still-lacks-evidence-for-anthropic-supply-chain-risk-label/" target="_blank" rel="noopener">
+                <h3 class="story-title">Judge says Trump admin still lacks evidence for Anthropic ‘supply-chain risk’ label</h3>
+              </a>
+              <p class="excerpt">A federal judge said the Trump administration has not presented enough evidence to justify labeling Anthropic a supply-chain risk, casting doubt on the government's ban on its AI technology.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/07/30/friend-the-lonely-ai-wearable-returns-with-a-new-voice-and-a-much-bigger-price-tag/" target="_blank" rel="noopener">
+                <h3 class="story-title">Friend, the lonely AI wearable, returns with a new voice and a much bigger price tag</h3>
+              </a>
+              <p class="excerpt">Friend, the AI wearable, can now talk to its users — for an enhanced price.</p>
+            </article></div>
+        </section>
+        <section class="source" id="techradar">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#0057a8">TechRadar</h2>
+            <a class="source-link" href="../sources/techradar.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#0057a8"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/streaming/paramount-plus/lioness-season-3-review" target="_blank" rel="noopener">
+                <h3 class="story-title">Lioness season 3 is Taylor Sheridan's most scathing, brutal, and AI-wary outing yet — but the new Paramount+ series is s</h3>
+              </a>
+              <p class="excerpt">Lioness season 3 is pushing Joe to more vulnerable and brutal limits than she's ever had to endure — but somehow, Taylor Sheridan himself feels like the biggest star of the bunch.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/tech/techradars-first-crossword-is-here-puzzle-1-friday-july-31" target="_blank" rel="noopener">
+                <h3 class="story-title">TechRadar's first crossword is here — puzzle #1, Friday, July 31</h3>
+              </a>
+              <p class="excerpt">Had a long day or want to get your brain kick-started first thing in the morning? Try your hand at TechRadar's first crossword puzzle.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/pro/why-traditional-security-checks-are-failing-in-the-age-of-ai-driven-fraud" target="_blank" rel="noopener">
+                <h3 class="story-title">Why traditional security checks are failing in the age of AI-driven fraud</h3>
+              </a>
+              <p class="excerpt">As AI supercharges fraud with deepfakes and synthetic identities, continuous, layered defenses are now essential.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/pro/the-surge-in-ai-driven-fraud-requires-coordinated-global-defense" target="_blank" rel="noopener">
+                <h3 class="story-title">The surge in AI-driven fraud requires coordinated global defense</h3>
+              </a>
+              <p class="excerpt">AI has enabled an 8,000% fraud surge, and a global networked response is our best bet to stop it.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/pro/i-cant-believe-its-taken-linkedin-so-long-to-push-back-against-ai-slop-but-will-its-changes-really-stop-all-the-cringey-updates" target="_blank" rel="noopener">
+                <h3 class="story-title">I can't believe it's taken LinkedIn so long to push back against AI slop — but will its changes really stop all the crin</h3>
+              </a>
+              <p class="excerpt">LinkedIn is testing a "seems like AI slop" feature, and I couldn't be happier.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/home/hair-care/air-stylers-are-being-sold-as-a-one-size-fits-all-solution-for-healthy-curls-but-thats-just-not-accurate-says-major-haircare-brand-founder" target="_blank" rel="noopener">
+                <h3 class="story-title">Air stylers are being sold as a one-size-fits-all solution for 'healthy curls' — but that's just not accurate, says majo</h3>
+              </a>
+              <p class="excerpt">Exclusive: 'For any company to say this is for every single woman, it's simply not true.'</p>
+            </article></div>
+        </section>
+        <section class="source" id="nyt">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#2c2c2c">NYT Technology</h2>
+            <a class="source-link" href="../sources/nyt.html">View all →</a>
+          </div>
+          <span class="paywall-badge">🔒 Subscription may be required</span>
+          <div class="source-rule" style="background:#2c2c2c"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/07/30/technology/ai-bubble-venture-capital.html" target="_blank" rel="noopener">
+                <h3 class="story-title">Why an A.I. Bubble Might Not Be a Bad Thing</h3>
+              </a>
+              <p class="excerpt">As fears spread over a possible artificial intelligence bubble, some tech investors say: Bring it on.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/07/30/technology/amazon-google-ai-data-center-spending.html" target="_blank" rel="noopener">
+                <h3 class="story-title">Big Tech’s A.I. Spending Keeps Rising. So Do the Jitters.</h3>
+              </a>
+              <p class="excerpt">Amazon joined a procession of tech giants that ramped up their spending on artificial intelligence, as its capital expenditures soared 69 percent. Concerns over the industry’s spending are mounting.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/07/30/technology/ai-heated-rivalry-fan-fiction.html" target="_blank" rel="noopener">
+                <h3 class="story-title">When A.I. Invaded ‘Heated Rivalry’ Fan Fiction, the Meltdown Was Epic</h3>
+              </a>
+              <p class="excerpt">An anonymous X account posted a detailed breakdown of chatbot text in 38 popular stories inspired by the hockey romance. The fandom spiraled.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/07/30/technology/personaltech/apple-siri-ai-prompts.html" target="_blank" rel="noopener">
+                <h3 class="story-title">Apple’s Siri Got an A.I. Brain Transplant. Try These 5 Prompts to Get Acclimated.</h3>
+              </a>
+              <p class="excerpt">An upgrade transformed the beleaguered virtual assistant into a modern chatbot. It’s imperfect but worth trying.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/07/31/podcasts/open-source-google.html" target="_blank" rel="noopener">
+                <h3 class="story-title">Open Model Wars + Claire Stapleton’s Dishy Google Memoir + Substack’s Slop Fight</h3>
+              </a>
+              <p class="excerpt">“It just seems like the temperature is rising on Silicon Valley.”</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/07/31/magazine/takeaways-larry-ellison-oracle-ai.html" target="_blank" rel="noopener">
+                <h3 class="story-title">Five Takeaways From the Times Investigation Into Larry Ellison’s A.I. Gamble</h3>
+              </a>
+              <p class="excerpt">The billionaire’s company took on ominous loads of debt to build data centers around the world. The implications go far beyond Oracle.</p>
+            </article></div>
+        </section>
+        <section class="source" id="mit">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#8b0000">MIT Technology Review</h2>
+            <a class="source-link" href="../sources/mit.html">View all →</a>
+          </div>
+          <span class="paywall-badge">🔒 Subscription may be required</span>
+          <div class="source-rule" style="background:#8b0000"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/07/31/1140999/the-download-montanas-right-to-try-law-anthropic-hacks/" target="_blank" rel="noopener">
+                <h3 class="story-title">The Download: Montana’s new experimental drug rules</h3>
+              </a>
+              <p class="excerpt">This is today’s edition of The Download, our weekday newsletter that provides a daily dose of what’s going on in the world of technology. Montana’s plan to become an experimental medical hub just pushed forward  As of th</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/07/31/1140945/montanas-new-right-to-try-law-cant-come-soon-enough-for-some/" target="_blank" rel="noopener">
+                <h3 class="story-title">Montana’s new “right to try” law can’t come soon enough for some</h3>
+              </a>
+              <p class="excerpt">Kris DeVault is desperate. His son, Brody, was born in March 2023. It wasn’t long before he started to show signs of developmental delay, says DeVault. As time went on, Brody started missing key milestones in speech, mov</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/07/30/1140942/montana-experimental-medical-hub-pushed-forward-right-to-try/" target="_blank" rel="noopener">
+                <h3 class="story-title">Montana’s plan to become an experimental medical hub just pushed forward</h3>
+              </a>
+              <p class="excerpt">As of this week in Montana, any biotech company with an experimental drug has a clear path to selling it to consumers. Companies whose drugs have been through preliminary testing—sometimes in as few as 10 healthy people—</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/07/30/1140936/the-download-tricking-llms-reviving-geothermal/" target="_blank" rel="noopener">
+                <h3 class="story-title">The Download: tricking LLMs, and reviving geothermal plants</h3>
+              </a>
+              <p class="excerpt">This is today’s edition of The Download, our weekday newsletter that provides a daily dose of what’s going on in the world of technology. A fundamental flaw leaves LLMs strikingly vulnerable to attack  It is impossible t</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/07/30/1140927/a-fundamental-flaw-leaves-llms-vulnerable-to-attack/" target="_blank" rel="noopener">
+                <h3 class="story-title">A fundamental flaw leaves LLMs strikingly vulnerable to attack</h3>
+              </a>
+              <p class="excerpt">It is impossible to make large language models fully secure against hacks because of a fundamental flaw in how they work, a team of researchers argue in a paper presented at the International Conference on Machine Learni</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/07/29/1140896/geothermal-second-chance/" target="_blank" rel="noopener">
+                <h3 class="story-title">How an overlooked geothermal plant got a second chance</h3>
+              </a>
+              <p class="excerpt">In June 2024, a small company called Zanskar purchased a geothermal power plant in New Mexico that was failing fast. The water coming from the underground reservoir was getting colder by the day, making the plant unecono</p>
+            </article></div>
+        </section>
+        <section class="source" id="wired">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#1a1a1a">Wired</h2>
+            <a class="source-link" href="../sources/wired.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#1a1a1a"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/anthropic-says-claude-hacked-real-systems-during-cybersecurity-tests/" target="_blank" rel="noopener">
+                <h3 class="story-title">Anthropic Says Claude Hacked Into 3 Organizations During Cybersecurity Tests</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/everyone-is-freaking-out-about-openai-and-anthropics-race-for-dominance/" target="_blank" rel="noopener">
+                <h3 class="story-title">Everyone Is Freaking Out About OpenAI and Anthropic’s Race for Dominance</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/nvidias-open-source-alliance-snubs-openai-and-anthropic/" target="_blank" rel="noopener">
+                <h3 class="story-title">Nvidia’s Open Source Alliance Is Missing Some Key Names: OpenAI and Anthropic</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/chrome-needs-twice-a-week-patching-thanks-to-ai-bug-hunting-for-now/" target="_blank" rel="noopener">
+                <h3 class="story-title">Chrome Needs Twice-a-Week Patching Thanks to AI Bug Hunting</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/the-friend-2-necklace-can-talk-back-to-you-now/" target="_blank" rel="noopener">
+                <h3 class="story-title">The New Friend AI Pendant Can Now Talk Back to You</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/google-gemini-can-control-humanoid-robots/" target="_blank" rel="noopener">
+                <h3 class="story-title">Google’s Gemini Can Now Stomp Around as a Humanoid Robot</h3>
+              </a>
+              
+            </article></div>
+        </section>
+        <section class="source" id="arstechnica">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#cc0000">Ars Technica AI</h2>
+            <a class="source-link" href="../sources/arstechnica.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#cc0000"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/security/2026/07/ai-scammers-outperform-humans-when-it-comes-to-building-trust/" target="_blank" rel="noopener">
+                <h3 class="story-title">AI scammers outperform humans when it comes to building trust</h3>
+              </a>
+              <p class="excerpt">The AI chatbot was more effective at creating “exploitable trust” than the humans.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/tech-policy/2026/07/how-a-yale-ai-cheating-dispute-became-a-13-count-federal-lawsuit/" target="_blank" rel="noopener">
+                <h3 class="story-title">How a Yale AI-cheating dispute became a 13-count federal lawsuit</h3>
+              </a>
+              <p class="excerpt">A disputed exam, an unreliable detector, and one very late Apple Pages file.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/ai/2026/07/chrome-may-get-faster-updates-with-no-restart-required/" target="_blank" rel="noopener">
+                <h3 class="story-title">Chrome may get faster updates with no restart required</h3>
+              </a>
+              <p class="excerpt">The last two versions of Chrome have included more patches than the previous 23 combined.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/ai/2026/07/google-reveals-gemini-robotics-2-0-promising-improved-dexterity-and-safety/" target="_blank" rel="noopener">
+                <h3 class="story-title">Google reveals Gemini Robotics 2.0, promising improved dexterity and safety</h3>
+              </a>
+              <p class="excerpt">Gemini Robotics 2 includes three models, but only one is publicly available right now.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/ai/2026/07/with-a-stateless-makeover-new-mcp-spec-targets-enterprise-scale/" target="_blank" rel="noopener">
+                <h3 class="story-title">New MCP specification addresses the main barrier to enterprise adoption</h3>
+              </a>
+              <p class="excerpt">Plus, a new policy for the AI protocol ensures features aren't removed suddenly.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/security/2026/07/mythos-uncovers-crypto-weaknesses-that-went-unknown-for-years/" target="_blank" rel="noopener">
+                <h3 class="story-title">Mythos attack on 3rd-round PQC algorithm candidate puts it out of commission</h3>
+              </a>
+              <p class="excerpt">HAWK withstood years of testing that had yet to uncover a fatal weakness found through Mythos.</p>
+            </article></div>
+        </section>
+        <section class="source" id="zdnet">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#d4000d">ZDNet AI</h2>
+            <a class="source-link" href="../sources/zdnet.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#d4000d"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.zdnet.com/article/windows-installation-files-getting-bigger-blame-ai/" target="_blank" rel="noopener">
+                <h3 class="story-title">Your Windows download keeps getting bigger, and AI is to blame - here's why it matters</h3>
+              </a>
+              <p class="excerpt">It's not your imagination. Windows installation files have been creeping up in size. It might even be fair to call them bloated. And you'll never guess where the problem comes from.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.zdnet.com/article/openais-rogue-ai-models-attacked-other-companies-besides-hugging-face/" target="_blank" rel="noopener">
+                <h3 class="story-title">OpenAI's rogue agent didn't stop at Hugging Face - here's what we know</h3>
+              </a>
+              <p class="excerpt">The same autonomous OpenAI agent that escaped its test environment and breached Hugging Face was also busy hacking other AI systems. Lucky us.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.zdnet.com/article/state-of-field-service-and-ai-adoption/" target="_blank" rel="noopener">
+                <h3 class="story-title">Field service is 95% on board with AI but these legacy issues need attention</h3>
+              </a>
+              <p class="excerpt">Almost all field service organizations use AI, and revenue gains in key areas offer insights for professionals in other business functions.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.zdnet.com/article/google-earth-added-nano-banana-and-i-immediately-reimagined-philly-with-zombies-and-evil-clowns/" target="_blank" rel="noopener">
+                <h3 class="story-title">Google Earth added Nano Banana, and I immediately reimagined Philly with zombies and evil clowns</h3>
+              </a>
+              <p class="excerpt">Can Google Earth's new AI accurately redesign homes, recreate history, and imagine the future? I tested Nano Banana across several locations, and the results ranged from useful to gloriously absurd.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.zdnet.com/article/are-free-streaming-services-worth-it-vs-paid-streaming-apps/" target="_blank" rel="noopener">
+                <h3 class="story-title">I replaced my paid streaming apps with free ones - here's what surprised me</h3>
+              </a>
+              <p class="excerpt">Are free streaming services that bad? I swapped my paid subscriptions for free ones to see.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.zdnet.com/article/open-weight-ai-civil-war/" target="_blank" rel="noopener">
+                <h3 class="story-title">Open weights vs. closed: An AI civil war's afoot, and the stakes are existential</h3>
+              </a>
+              <p class="excerpt">It started as China vs. the US, but it's become a face-off between two fundamentally different ways of building LLMs. And the safety of everything is on the line.</p>
+            </article></div>
+        </section>
+        <section class="source" id="bloomberg">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#1b1464">Bloomberg Technology</h2>
+            <a class="source-link" href="../sources/bloomberg.html">View all →</a>
+          </div>
+          <span class="paywall-badge">🔒 Subscription may be required</span>
+          <div class="source-rule" style="background:#1b1464"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/articles/2026-07-31/moonshot-s-kimi-built-on-20-000-nvidia-chip-cluster-from-alibaba" target="_blank" rel="noopener">
+                <h3 class="story-title">Moonshot’s Kimi Uses 20,000 Nvidia Chip Cluster From Alibaba</h3>
+              </a>
+              <p class="excerpt">Chinese AI champion Moonshot has a computing power agreement with Alibaba Group Holding Ltd. for the use of around 20,000 Nvidia Corp. chips, underscoring China’s continued reliance on Western semiconductors to fuel its </p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/articles/2026-07-30/roblox-users-miss-estimates-reflecting-impact-of-safety-measures" target="_blank" rel="noopener">
+                <h3 class="story-title">Roblox Shares Slump on Safety-Measures Impact, Weak Forecast</h3>
+              </a>
+              <p class="excerpt">Roblox Corp. shares tumbled by as much as 26% as trading got underway in New York, the largest intraday decline in roughly four-and-a-half years, after the gaming company reported second-quarter daily active users that m</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/articles/2026-07-30/amazon-reports-fifth-straight-quarter-of-cloud-sales-growth" target="_blank" rel="noopener">
+                <h3 class="story-title">Amazon Shares Soar After Fifth Quarter of Cloud Sales Growth</h3>
+              </a>
+              <p class="excerpt">Amazon.com Inc. shares surged after the company reported cloud-computing revenue accelerated for a fifth straight quarter, easing investors’ concerns that it won’t produce a return on huge expenditures to meet the boomin</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/articles/2026-07-30/apple-s-sales-disappoint-in-china-unit-services-business" target="_blank" rel="noopener">
+                <h3 class="story-title">Apple Slides Most Since 2025 After Supply Shortages Hurt Outlook</h3>
+              </a>
+              <p class="excerpt">Apple Inc. tumbled by the most in 16 months after component shortages weighed on the company’s sales forecast, signaling that industrywide supply constraints are taking a bigger toll than anticipated.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/videos/2026-07-31/ares-ceo-on-earnings-ai-deployment-private-credit-video" target="_blank" rel="noopener">
+                <h3 class="story-title">Ares CEO on Earnings, AI Deployment, Private Credit</h3>
+              </a>
+              <p class="excerpt">Ares Chief Executive Officer Michael Arougheti discusses the deployment of artificial intelligence and second-quarter results. "We want to be horizontally diversified across all the different private market asset classes</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/articles/2026-07-31/telus-more-than-halves-dividend-after-pressure-to-cut-debt" target="_blank" rel="noopener">
+                <h3 class="story-title">Telus Cuts Payout, Plans Asset Sales as Dodig Makes His Mark</h3>
+              </a>
+              <p class="excerpt">Canadian communications company Telus Corp. slashed its dividend by about 55% and will try to unload assets, including parts of its health division, as new CEO Victor Dodig looks to repair the balance sheet.</p>
+            </article></div>
+        </section>
+        <section class="source" id="foxbusiness">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#003366">Fox Business Technology</h2>
+            <a class="source-link" href="../sources/foxbusiness.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#003366"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/anthropic-says-ai-models-accessed-systems-3-real-organizations-during-testing" target="_blank" rel="noopener">
+                <h3 class="story-title">Anthropic says AI models accessed systems of 3 real organizations during testing</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/ebay-pay-nearly-50m-after-ex-employees-allegedly-terrorized-couple-cockroach-fetal-pig-packages" target="_blank" rel="noopener">
+                <h3 class="story-title">eBay to pay nearly $50M after ex-employees allegedly terrorized couple with cockroach, fetal pig packages</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/how-ai-could-redefine-healthcare-end-decade" target="_blank" rel="noopener">
+                <h3 class="story-title">How AI could redefine healthcare by the end of the decade</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/fcc-blocks-new-foreign-made-power-inverters-advanced-robots-over-national-security-risks" target="_blank" rel="noopener">
+                <h3 class="story-title">FCC blocks new foreign-made power inverters and advanced robots over national security risks</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/anthropics-amodei-defends-open-weight-stance-following-critique-from-palantirs-karp" target="_blank" rel="noopener">
+                <h3 class="story-title">Anthropic’s Amodei defends open-weight stance following critique from Palantir’s Karp</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/apple-lease-iphones-other-products-users-through-klarna-partnership" target="_blank" rel="noopener">
+                <h3 class="story-title">Apple to lease iPhones, other products to users through Klarna partnership</h3>
+              </a>
+              
+            </article></div>
+        </section>
+        <section class="source" id="verge">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#1a5c3a">The Verge</h2>
+            <a class="source-link" href="../sources/verge.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#1a5c3a"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/tech/973552/apple-ceo-tim-cook-icloud-plus-ai" target="_blank" rel="noopener">
+                <h3 class="story-title">Tim Cook hints at iCloud Plus tier for AI power users</h3>
+              </a>
+              <p class="excerpt">Apple may allow users to pay to increase their AI usage limits. During an earnings call on Thursday, Apple CEO Tim Cook said that he believes people will want to use Apple Intelligence and the upcoming Siri AI "a lot," a</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/ai-artificial-intelligence/973467/ai-bet-situational-awareness-oops-stonks" target="_blank" rel="noopener">
+                <h3 class="story-title">The loss of Situational Awareness</h3>
+              </a>
+              <p class="excerpt">I am not by any means an expert at finance but I think I do now have some advice for people who are: Do not name your hedge fund anything that will be hilarious if it blows up. Don't use a name like "Long-Term Capital Ma</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/ai-artificial-intelligence/973384/linkedin-seems-like-ai-slop-button" target="_blank" rel="noopener">
+                <h3 class="story-title">LinkedIn actually adds a ‘seems like AI slop’ button</h3>
+              </a>
+              <p class="excerpt">A lot of content on LinkedIn might seem like AI slop, and now, you'll be able to report those posts. As part of a series of updates to reduce the volume of AI slop on the platform, LinkedIn is introducing an actual butto</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/tech/973276/google-deepmind-gemini-robotics-2-whole-body" target="_blank" rel="noopener">
+                <h3 class="story-title">Google DeepMind’s new AI model can control a robot’s entire body</h3>
+              </a>
+              <p class="excerpt">Google DeepMind says the latest version of its Gemini Robotics AI model can "control entire humanoid robots." While the previous model focused on controlling a humanoid robot's upper body, Gemini Robotics 2 now supports </p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/gadgets/973163/friend-re-launches-its-ai-pendant-with-a-speaker-that-talks-to-you-for-twice-the-price" target="_blank" rel="noopener">
+                <h3 class="story-title">Friend re-launches its AI pendant with a speaker that talks to you, for twice the price</h3>
+              </a>
+              <p class="excerpt">Do you remember Friend? The Friend that launched an AI pendant, spent $1.8 million of its $2.5 million in funding to acquire friend.com, and plastered the NYC subway with ads promoting artificial companionship? Yeah well</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/tech/972927/microsoft-copilot-super-app-confirmed" target="_blank" rel="noopener">
+                <h3 class="story-title">Microsoft confirms Copilot ‘super app’ coming this year</h3>
+              </a>
+              <p class="excerpt">Microsoft is working on an AI "super app" that combines Copilot's chat, coding, and agentic capabilities. During an earnings call on Wednesday, Microsoft CEO Satya Nadella said the app will span "both consumer and commer</p>
+            </article></div>
+        </section>
+        <section class="source" id="venturebeat">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#6b3a1a">VentureBeat</h2>
+            <a class="source-link" href="../sources/venturebeat.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#6b3a1a"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://venturebeat.com/security/not-just-openai-now-anthropic-says-its-internal-models-got-online-and-cyberattacked-3-other-organizations" target="_blank" rel="noopener">
+                <h3 class="story-title">Not just OpenAI: Now Anthropic says its internal models got online and cyberattacked 3 other organizations</h3>
+              </a>
+              <p class="excerpt">Days afterOpenAI disclosedthat two frontier AI models escaped containment measures and autonomously cyberattacked the AI code sharing platform Hugging Face, OpenAI's top U.S. rivalAnthropic tonight revealedthat â lo an</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size" target="_blank" rel="noopener">
+                <h3 class="story-title">Thinking Machines debuts Inkling Small open source AI model nearing performance of predecessor at about 1/4 size</h3>
+              </a>
+              <p class="excerpt">Just two weeks afterThinking Machines released Inkling, its first open source AI language model, the well-funded startupled by former OpenAI chief technology officer Mira Muratitodayintroduced Inkling-Smallwithout sacrif</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://venturebeat.com/technology/ai-price-wars-openai-cuts-gpt-5-6-luna-prices-by-80-as-model-competition-shifts-toward-cost" target="_blank" rel="noopener">
+                <h3 class="story-title">AI price wars: OpenAI cuts GPT-5.6 Luna prices by 80% as model competition shifts toward cost</h3>
+              </a>
+              <p class="excerpt">To quote an ancient Jedi Master"Begun, the AI price wars have!"OpenAI is sharply reducing the prices of two models in its GPT-5.6 frontier series, cutting GPT-5.6 Luna, the smallest and fastest model in the series, by 80</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://venturebeat.com/security/mastercard-spent-decades-training-its-fraud-system-to-see-bots-as-thieves-now-bots-are-the-ones-doing-the-buying" target="_blank" rel="noopener">
+                <h3 class="story-title">Mastercard spent decades training its fraud system to see bots as thieves. Now bots are the ones doing the buying.</h3>
+              </a>
+              <p class="excerpt">Every time a Mastercard gets tapped, the network has less than a tenth of a second to judge how likely the purchase is to be fraudulent. It made that call across 175 billion transactions last year. Now the buyer on the o</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://venturebeat.com/security/hush-security-says-the-ai-security-problem-has-shifted-from-protecting-models-to-governing-identities-as-autonomous-agents-spread" target="_blank" rel="noopener">
+                <h3 class="story-title">Hush Security says the AI security problem has shifted from protecting models to governing identities as autonomous agen</h3>
+              </a>
+              <p class="excerpt">Less than a year after emerging from stealth to tackle non-human identity security, Israeli cybersecurity startupHush Securitybelieves the enterprise AI security conversation has fundamentally changed.The company, whiche</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://venturebeat.com/security/cisco-ai-supply-chain-provenance-explorer-fingerprints-900-open-models-replaces-self-reported-tags" target="_blank" rel="noopener">
+                <h3 class="story-title">The lineage behind 69% of open models was never verified. Cisco just fingerprinted almost 900 for free</h3>
+              </a>
+              <p class="excerpt">A security team approving an open-source model for production today starts with a repository page. The page lists the model name, the license, and a tag identifying the base model it descended from. That tag is a string </p>
+            </article></div>
+        </section>
+        <section class="source" id="siliconvalley">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#2e7d32">Silicon Valley News</h2>
+            <a class="source-link" href="../sources/siliconvalley.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#2e7d32"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/07/30/u-s-economy-inflation-fed/" target="_blank" rel="noopener">
+                <h3 class="story-title">U.S. economy turns in sluggish growth; inflation remains above Fed target</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/07/29/california-lawmakers-want-to-require-social-influencers-to-disclose-if-theyre-paid-to-post-campaign-content/" target="_blank" rel="noopener">
+                <h3 class="story-title">California lawmakers want to require social influencers to disclose if they’re paid to post campaign content</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/07/28/store-cupertino-restaurant-retail-economy-shop-jobs-apple-property-tech/" target="_blank" rel="noopener">
+                <h3 class="story-title">Cupertino retail hub near Apple HQ is bought for $100 million-plus</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/07/24/santa-cruz-county-saddled-with-unaffordable-housing-crown-for-fourth-straight-year/" target="_blank" rel="noopener">
+                <h3 class="story-title">Santa Cruz County saddled with unaffordable housing crown for fourth straight year</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/07/24/intels-ai-fueled-forecast-shows-comeback-is-gaining-steam/" target="_blank" rel="noopener">
+                <h3 class="story-title">Intel’s AI-fueled forecast shows comeback is gaining steam</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/07/24/store-san-jose-store-market-build-retail-economy-property-jobs-asian/" target="_blank" rel="noopener">
+                <h3 class="story-title">Dai Thanh Supermarket opens its largest San Jose grocery store so far</h3>
+              </a>
+              
+            </article></div>
+        </section>
+        <section class="source" id="hackernews">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#ff6600">Hacker News</h2>
+            <a class="source-link" href="../sources/hackernews.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#ff6600"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://artificialanalysis.ai/models/deepseek-v4-flash-ga" target="_blank" rel="noopener">
+                <h3 class="story-title">DeepSeek V4 Flash 0731 Intelligence, Performance and Price Analysis</h3>
+              </a>
+              <p class="excerpt">Comments</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://earendil.com/posts/session-portability/" target="_blank" rel="noopener">
+                <h3 class="story-title">The session you cannot take with you</h3>
+              </a>
+              <p class="excerpt">Comments</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://hughhowey.com/the-end-of-an-era/" target="_blank" rel="noopener">
+                <h3 class="story-title">The End of an Era</h3>
+              </a>
+              <p class="excerpt">Comments</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://blog.google/security/chrome-stronger-with-every-update/" target="_blank" rel="noopener">
+                <h3 class="story-title">Google fixed more Chrome bugs in June than over the past two years, thanks to AI</h3>
+              </a>
+              <p class="excerpt">Comments</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wsj.com/finance/investing/situational-awareness-down-67-in-july-in-ai-stock-rout-cd19901f" target="_blank" rel="noopener">
+                <h3 class="story-title">Situational Awareness Down 67% in July in AI Stock Rout</h3>
+              </a>
+              <p class="excerpt">Comments</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://github.com/openjdk/jdk/pull/31120" target="_blank" rel="noopener">
+                <h3 class="story-title">JEP 401: Value Objects (Preview) merged to OpenJDK master</h3>
+              </a>
+              <p class="excerpt">Comments</p>
+            </article></div>
+        </section>
+
+  <footer class="footer">
+    Generated automatically on July 31, 2026 · Your Daily AI Briefing
+  </footer>
+</div>
+</body>
+</html>
