@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Briefing — November 25, 2026</title>
+  <meta name="description" content="Your daily AI news digest for November 25, 2026, featuring stories from TechCrunch AI, TechRadar, NYT Technology, MIT Technology Review, Wired, Ars Technica AI, Bloomberg Technology, Fox Business Technology, The Verge, Silicon Valley News.">
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:    #1a1410;
+  --paper:  #f7f3ec;
+  --cream:  #ede8df;
+  --accent: #c0392b;
+  --muted:  #7a6f65;
+  --rule:   #c8bfb0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.page-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+.topnav {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+}
+.topnav a { color: var(--muted); }
+.topnav a:hover { color: var(--accent); text-decoration: none; }
+.topnav a.active { color: var(--ink); font-weight: 500; }
+
+.masthead { margin-bottom: 48px; }
+.masthead-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.masthead h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+.masthead-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+  color: var(--accent);
+  font-size: 18px;
+}
+.masthead-rule::before,
+.masthead-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.footer {
+  text-align: center;
+  padding-top: 40px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  border-top: 1px solid var(--rule);
+  margin-top: 60px;
+}
+
+
+.masthead { text-align: center; }
+
+.paywall-badge {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 0.03em;
+}
+
+.toc {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-bottom: 48px;
+}
+.toc-title {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.toc a { font-size: 14px; border-bottom: 1px dotted var(--rule); }
+.toc a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+
+.source { margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--rule); }
+.source:last-of-type { border-bottom: none; }
+
+.source-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.source-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.source-rule { height: 2px; margin-bottom: 20px; }
+.source-link { font-size: 12px; color: var(--muted); }
+.source-link:hover { color: var(--accent); text-decoration: none; }
+
+.story { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px dotted var(--rule); }
+.story:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.story-title { font-size: 16px; font-weight: 500; line-height: 1.4; transition: color 0.15s; }
+.story-link:hover .story-title { color: var(--accent); }
+.excerpt { font-size: 14px; color: var(--muted); margin-top: 6px; line-height: 1.55; }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <nav class="topnav"><a href="../index.html" class="active">All Briefings</a><a href="../sources.html" class="">Sources</a><a href="../blog/index.html" class="">Blog</a><a href="../search.html" class="">Search</a></nav>
+
+  <header class="masthead">
+    <p class="masthead-label">Daily AI Briefing</p>
+    <h1>November 25, 2026</h1>
+    <div class="masthead-rule">✦</div>
+  </header>
+
+  <nav class="toc">
+    <p class="toc-title">In this issue</p>
+    <ul><li><a href="#techcrunch">TechCrunch AI</a></li><li><a href="#techradar">TechRadar</a></li><li><a href="#nyt">NYT Technology</a></li><li><a href="#mit">MIT Technology Review</a></li><li><a href="#wired">Wired</a></li><li><a href="#arstechnica">Ars Technica AI</a></li><li><a href="#bloomberg">Bloomberg Technology</a></li><li><a href="#foxbusiness">Fox Business Technology</a></li><li><a href="#verge">The Verge</a></li><li><a href="#siliconvalley">Silicon Valley News</a></li></ul>
+  </nav>
+
+  
+        <section class="source" id="techcrunch">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#2c3e6b">TechCrunch AI</h2>
+            <a class="source-link" href="../sources/techcrunch.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#2c3e6b"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/11/25/openai-says-heavy-chatgpt-users-may-hit-limits-sooner-as-it-merges-chat-and-work/" target="_blank" rel="noopener">
+                <h3 class="story-title">OpenAI says heavy ChatGPT users may hit limits sooner as it merges Chat and Work</h3>
+              </a>
+              <p class="excerpt">OpenAI will introduce a single usage meter across ChatGPT as it combines the Chat and Work experiences.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/11/25/jensen-huang-broke-nvidias-code-of-conduct-and-his-employees-may-not-forget-it/" target="_blank" rel="noopener">
+                <h3 class="story-title">Jensen Huang broke Nvidia’s code of conduct, and his employees may not forget it</h3>
+              </a>
+              <p class="excerpt">Most codes of conduct serve as a reflection of corporate culture. In Nvidia's case, that could have consequences.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/11/25/anthropics-dario-amodei-calls-accusations-of-surrendering-human-control-to-ai-absurd/" target="_blank" rel="noopener">
+                <h3 class="story-title">Anthropic’s Dario Amodei calls accusations of surrendering human control to AI ‘absurd’</h3>
+              </a>
+              <p class="excerpt">Anthropic CEO Dario Amodei pushes back against rivals’ accusations that he favors surrendering human agency to AI, even as leading AI companies increasingly automate their own research and model development.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/11/25/want-to-buy-your-kid-an-ai-toy-this-christmas-not-in-new-york/" target="_blank" rel="noopener">
+                <h3 class="story-title">Want to buy your kid an AI toy this Christmas? Not in New York</h3>
+              </a>
+              <p class="excerpt">New York has banned AI chatbot toys for five years as new research from Common Sense Media reveals troubling safety failures, including exposure to inappropriate content and risks to emotional development.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/2026/11/25/state-ags-fight-character-ais-plan-to-auction-off-users-private-chats/" target="_blank" rel="noopener">
+                <h3 class="story-title">Character.AI’s plan to auction off users’ private chats challenged by state AGs</h3>
+              </a>
+              <p class="excerpt">The proposed Character.ai bankruptcy sale includes sensitive personal data from more than 21 million U.S. accounts, including 2.1 million registered to minors, the state AGs said.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://techcrunch.com/podcast/ai-data-centers-are-becoming-harder-to-build-and-neoclouds-are-feeling-it/" target="_blank" rel="noopener">
+                <h3 class="story-title">AI data centers are becoming harder to build, and neoclouds are feeling it</h3>
+              </a>
+              <p class="excerpt">⁠Nvidia has made clear⁠ it won’t backstop an AI data center until it’s nearly ready to run, and that’s landing just as neoclouds report construction delays and more expensive debt. The message to developers is that land,</p>
+            </article></div>
+        </section>
+        <section class="source" id="techradar">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#0057a8">TechRadar</h2>
+            <a class="source-link" href="../sources/techradar.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#0057a8"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/pro/building-a-workstation-or-studio-pc-here-are-3-black-friday-high-airflow-case-deals-from-fractal-cooler-master-and-phanteks" target="_blank" rel="noopener">
+                <h3 class="story-title">Building a workstation or studio PC? Here are 3 Black Friday high-airflow case deals from Fractal, Cooler Master, and Ph</h3>
+              </a>
+              <p class="excerpt">Need a cool, quiet PC case for your workstation or office build? Here's my top high-airflow Black Friday deals from Cooler Master, Phanteks, and Fractal Design.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/pro/no-starlink-no-problem-part-deux-ukrainian-student-invents-autopilot-system-for-uav-that-works-without-gps-receives-the-future-of-ukraine-presidential-award" target="_blank" rel="noopener">
+                <h3 class="story-title">No Starlink, no problem, part deux: Ukrainian student invents autopilot system for UAV that works without GPS, receives </h3>
+              </a>
+              <p class="excerpt">Ukrainian teenager develops an artificial intelligence-powered drone autopilot that operates without GPS, earning presidential recognition for his engineering achievements.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/vpn/vpn-services/urban-vpn-under-legal-scrutiny-over-claims-it-harvested-users-private-ai-prompts" target="_blank" rel="noopener">
+                <h3 class="story-title">Urban VPN under legal scrutiny over claims it harvested users' private AI prompts</h3>
+              </a>
+              <p class="excerpt">Urban VPN is the subject of an attorney investigation into a potential class action privacy lawsuit over claims that its Chrome and Edge extensions secretly collected AI chatbot conversations without users’ knowledge or </p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/pro/nvidias-rtx-5090-costs-usd7-000-on-its-own-so-corsairs-usd2-600-black-friday-discount-on-this-full-64gb-pc-is-wild-value" target="_blank" rel="noopener">
+                <h3 class="story-title">Nvidia's RTX 5090 costs $7,000 on its own — so Corsair's $2,600 Black Friday discount on this full 64GB PC is wild value</h3>
+              </a>
+              <p class="excerpt">The Corsair Vengeance i7600 Air is the cheapest RTX 5090 PC out there. With the standalone GPU costing $7,000, this entire prebuild is a steal at $8,700.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/tablets/ereaders/amazon-kindles-vs-non-amazon-ereaders-heres-how-they-differ-and-which-models-i-recommend-this-black-friday" target="_blank" rel="noopener">
+                <h3 class="story-title">Amazon Kindles vs non-Amazon ereaders: here’s which models I recommend</h3>
+              </a>
+              <p class="excerpt">I've compared the best ereaders to help you choose the right model for your needs.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.techradar.com/health-fitness/smartwatches/the-best-black-friday-apple-watch-deals-save-on-apple-watch-ultra-4-ultra-3-series-12-se-3-and-more-with-deals-picked-by-a-smartwatch-tester" target="_blank" rel="noopener">
+                <h3 class="story-title">The best early Black Friday Apple Watch deals</h3>
+              </a>
+              <p class="excerpt">I've hand-picked the very best Black Friday Apple Watch deals in the US and UK, from retailers across the internet, to help you find the right device for your needs and budget.</p>
+            </article></div>
+        </section>
+        <section class="source" id="nyt">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#2c2c2c">NYT Technology</h2>
+            <a class="source-link" href="../sources/nyt.html">View all →</a>
+          </div>
+          <span class="paywall-badge">🔒 Subscription may be required</span>
+          <div class="source-rule" style="background:#2c2c2c"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/11/25/technology/anthropic-stock-tech-start-ups.html" target="_blank" rel="noopener">
+                <h3 class="story-title">Anthropic’s Stock Debut Could Hurt Tech Start-Ups</h3>
+              </a>
+              <p class="excerpt">As the share price drops, it could act as a brake on Silicon Valley’s frenzied investing in younger companies.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/11/24/technology/jensen-huang-apology-nvidia-ceo.html" target="_blank" rel="noopener">
+                <h3 class="story-title">Jensen Huang Apologizes to Nvidia Employees, Says He Is in Therapy</h3>
+              </a>
+              <p class="excerpt">A day after returning to his company, Mr. Huang acknowledged that he had violated Nvidia’s code of conduct and “made some terrible mistakes.”</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/11/23/technology/jensen-huang-nvidia-board-trump.html" target="_blank" rel="noopener">
+                <h3 class="story-title">With Jensen Huang’s Return as C.E.O., Trump Effectively Overrode Nvidia’s Board</h3>
+              </a>
+              <p class="excerpt">Nvidia’s board said Mr. Huang would not be back. But President Trump, who pushed for Mr. Huang’s reinstatement, effectively overrode the board, governance experts said.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/11/24/business/nvidia-alice-huang-china.html" target="_blank" rel="noopener">
+                <h3 class="story-title">From Chinese Factory Town to the Nvidia Scandal: The Rise of Alice Huang</h3>
+              </a>
+              <p class="excerpt">The woman whose role has become a focus of the Nvidia spying saga grew up in a small town built around a weapons factory. Her jump to finance and the tech world paralleled China’s own.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/11/25/technology/thanksgiving-ai-doom-family.html" target="_blank" rel="noopener">
+                <h3 class="story-title">How to Talk to Your Family About A.I. Doom at Thanksgiving</h3>
+              </a>
+              <p class="excerpt">For people steeped in the world of artificial intelligence, the topic could be a minefield at this year’s dinner.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.nytimes.com/2026/11/25/technology/personaltech/apps-widgets.html" target="_blank" rel="noopener">
+                <h3 class="story-title">How to Use Your Apps With Fewer Taps</h3>
+              </a>
+              <p class="excerpt">With pop-up menus and widgets, your phone or tablet gives you quick ways to check information and get things done with less effort.</p>
+            </article></div>
+        </section>
+        <section class="source" id="mit">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#8b0000">MIT Technology Review</h2>
+            <a class="source-link" href="../sources/mit.html">View all →</a>
+          </div>
+          <span class="paywall-badge">🔒 Subscription may be required</span>
+          <div class="source-rule" style="background:#8b0000"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/11/25/1149836/data-centers-gas-power-plants/" target="_blank" rel="noopener">
+                <h3 class="story-title">How data centers are driving a US natural-gas boom</h3>
+              </a>
+              <p class="excerpt">In May 2025, my colleague David Rotman wrote a feature story describing how AI could keep us dependent on natural gas. Just 18 months later, I’ve lost count of how many times he’s already been proved right. Sure, it’s te</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/11/25/1149808/the-download-ai-open-records-permafrost-fires/" target="_blank" rel="noopener">
+                <h3 class="story-title">The Download: AI swamping open records, and firefighting for permafrost</h3>
+              </a>
+              <p class="excerpt">This is today’s edition of The Download, our weekday newsletter that provides a daily dose of what’s going on in the world of technology. AI is straining America’s open records systems AI has intensified investors’ inter</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/11/25/1149702/ai-is-straining-americas-open-records-systems/" target="_blank" rel="noopener">
+                <h3 class="story-title">AI is straining America’s open records systems</h3>
+              </a>
+              <p class="excerpt">In Panton, Vermont, population 660, town clerk Kyle Rowe did it all. He crafted budgets, paid vendors, handled property tax disputes, and served as the town’s zoning supervisor and presiding elections officer. During mor</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/11/24/1149669/the-download-data-centers-gas-ai-consciousness/" target="_blank" rel="noopener">
+                <h3 class="story-title">The Download: AI’s gas power boom and a consciousness reality check</h3>
+              </a>
+              <p class="excerpt">This is today’s edition of The Download, our weekday newsletter that provides a daily dose of what’s going on in the world of technology. Data centers are getting their own natural gas power plants One of the biggest obs</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/11/24/1149622/data-centers-natural-gas/" target="_blank" rel="noopener">
+                <h3 class="story-title">Data centers are getting their own natural gas power plants</h3>
+              </a>
+              <p class="excerpt">One of the biggest roadblocks to starting up a data center is getting approval to connect to the electric grid—a wait that could last as long as a decade. Some developers aren’t willing to wait and are instead opting to </p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.technologyreview.com/2026/11/23/1149569/a-legendary-philosopher-isnt-buying-anthropics-consciousness-argument/" target="_blank" rel="noopener">
+                <h3 class="story-title">A legendary philosopher isn’t buying Anthropic’s consciousness argument</h3>
+              </a>
+              <p class="excerpt">This story originally appeared in The Algorithm, our weekly newsletter on AI. To get stories like this in your inbox first, sign up here. Before going public last week, Anthropic named the possibility that AI could be co</p>
+            </article></div>
+        </section>
+        <section class="source" id="wired">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#1a1a1a">Wired</h2>
+            <a class="source-link" href="../sources/wired.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#1a1a1a"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/best-black-friday-deals-11-20-2026/" target="_blank" rel="noopener">
+                <h3 class="story-title">BLACK FRIDAY</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/airplane-turbulence-is-extremely-hard-to-predict-and-avoid/" target="_blank" rel="noopener">
+                <h3 class="story-title">Airplane Turbulence Is Extremely Hard to Predict, but Maybe Not for Long</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/jensen-huang-nvidia-us-national-security-risks/" target="_blank" rel="noopener">
+                <h3 class="story-title">Jensen Huang’s Return Shows Nvidia Is Too Big to Police</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/ai-agents-can-get-honeypotted-too-aw/" target="_blank" rel="noopener">
+                <h3 class="story-title">Anthropic Created a Honeypot to Lure AI Agents Into Misbehaving</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/dont-bring-up-ai-if-you-want-to-enjoy-your-thanksgiving/" target="_blank" rel="noopener">
+                <h3 class="story-title">Don’t Bring Up AI if You Want to Enjoy Your Thanksgiving</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.wired.com/story/ai-solved-maths-most-famous-problem/" target="_blank" rel="noopener">
+                <h3 class="story-title">AI Solved Math’s Most Famous Problem. Now Humans Are Struggling to Understand It</h3>
+              </a>
+              
+            </article></div>
+        </section>
+        <section class="source" id="arstechnica">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#cc0000">Ars Technica AI</h2>
+            <a class="source-link" href="../sources/arstechnica.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#cc0000"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/gadgets/2026/11/ars-live-recap-dont-expect-military-attacks-on-data-centers-to-stop/" target="_blank" rel="noopener">
+                <h3 class="story-title">Ars Live recap: Don’t expect military attacks on data centers to stop</h3>
+              </a>
+              <p class="excerpt">Militaries have many reasons to target data centers and the cloud in wartime.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/ai/2026/11/ai-can-do-the-calculations-physicists-are-figuring-out-what-comes-next/" target="_blank" rel="noopener">
+                <h3 class="story-title">AI may soon change what it means to be a theoretical physicist</h3>
+              </a>
+              <p class="excerpt">Frontier AI is already solving problems that once took top physicists a full day.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/ai/2026/11/whats-going-on-with-the-riemann-hypothesis/" target="_blank" rel="noopener">
+                <h3 class="story-title">What's going on with the Riemann hypothesis?</h3>
+              </a>
+              <p class="excerpt">A new AI-assisted proof seems to be solid, but we're not sure what it tells us.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/gadgets/2026/11/faa-opens-probe-after-amazon-delivery-drone-clips-cable-crashes-into-garage/" target="_blank" rel="noopener">
+                <h3 class="story-title">Amazon drone crashes on garage after delivering shampoo, draws FAA probe</h3>
+              </a>
+              <p class="excerpt">Amazon says Prime Air drones made “hundreds of thousands” of deliveries in 2026.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/ai/2026/11/tidal-will-ban-fully-ai-generated-music-on-december-9/" target="_blank" rel="noopener">
+                <h3 class="story-title">Tidal announces ban on AI-generated music; 27 million tracks will be deleted</h3>
+              </a>
+              <p class="excerpt">AI songs account for 6.3 percent of Tidal's catalog, but it's about to be zero.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://arstechnica.com/tech-policy/2026/11/how-trump-and-silicon-valley-forced-nvidia-to-take-jensen-huang-back/" target="_blank" rel="noopener">
+                <h3 class="story-title">How Trump and Silicon Valley forced Nvidia to take Jensen Huang back</h3>
+              </a>
+              <p class="excerpt">Huang’s allies enlisted Trump and Vance to pressure Nvidia’s board into taking him back.</p>
+            </article></div>
+        </section>
+        <section class="source" id="bloomberg">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#1b1464">Bloomberg Technology</h2>
+            <a class="source-link" href="../sources/bloomberg.html">View all →</a>
+          </div>
+          <span class="paywall-badge">🔒 Subscription may be required</span>
+          <div class="source-rule" style="background:#1b1464"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/articles/2026-11-25/palo-alto-networks-accused-by-ex-executive-of-accounting-fraud" target="_blank" rel="noopener">
+                <h3 class="story-title">Palo Alto Networks Accused by Ex-Executive of Accounting Fraud</h3>
+              </a>
+              <p class="excerpt">Palo Alto Networks Inc., which last week announced a $4.5 billion AI acquisition, was sued by a former executive over claims he was fired for fighting back against accounting fraud at the cybersecurity company.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/articles/2026-11-25/spacex-receives-government-approval-to-launch-space-data-centers" target="_blank" rel="noopener">
+                <h3 class="story-title">SpaceX Wins Government Approval to Launch Space Data Centers</h3>
+              </a>
+              <p class="excerpt">The US Federal Communications Commission approved SpaceX’s request to launch as many as 1 million satellites for the creation of a network of data centers in orbit for complex artificial intelligence computing.</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/videos/2026-11-25/franklin-templeton-s-araghi-sees-ai-selloff-as-market-reset" target="_blank" rel="noopener">
+                <h3 class="story-title">Franklin Templeton's Araghi Sees AI Selloff as Market Reset</h3>
+              </a>
+              <p class="excerpt">Franklin Templeton portfolio manager Sara Araghi says the sharp tech selloff reflects an unwinding of earlier AI euphoria rather than a fundamental deterioration in demand. She discusses why AI infrastructure spending re</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/videos/2026-11-25/coreweave-nvidia-credit-risk-hit-fresh-highs-video" target="_blank" rel="noopener">
+                <h3 class="story-title">CoreWeave, Nvidia Credit Risk Hit Fresh Highs</h3>
+              </a>
+              <p class="excerpt">Bloomberg's James Crombie joins Dani Burger on "Bloomberg Deals." CoreWeave and Nvidia credit-risk measures hit fresh all-time highs Wednesday while gauges of perceived worry again reached levels last seen in March, as W</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/videos/2026-11-25/netflix-to-buy-radford-studio-center-for-380-million-video" target="_blank" rel="noopener">
+                <h3 class="story-title">Netflix to Buy Radford Studio Center for $380 Million</h3>
+              </a>
+              <p class="excerpt">Bloomberg's John Gittelsohn discusses Netflix’s purchase of the historic Radford Studio Center in Los Angeles. The $380 million price is about 80% below the $1.85 billion Hackman Capital Partners paid for the property in</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.bloomberg.com/news/videos/2026-11-25/can-us-chip-controls-slow-china-s-ai-progress-video" target="_blank" rel="noopener">
+                <h3 class="story-title">Can US Chip Controls Slow China’s AI Progress?</h3>
+              </a>
+              <p class="excerpt">Nvidia is at the center of a renewed debate over how much access China should have to advanced US AI chips. CSIS’s Emily Harding discusses whether export controls can meaningfully slow China’s AI progress without acceler</p>
+            </article></div>
+        </section>
+        <section class="source" id="foxbusiness">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#003366">Fox Business Technology</h2>
+            <a class="source-link" href="../sources/foxbusiness.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#003366"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/amazon-delivery-drone-crashes-onto-garage-after-hitting-cable" target="_blank" rel="noopener">
+                <h3 class="story-title">Amazon delivery drone crashes onto garage after hitting cable</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/waymo-issues-double-safety-recall-days-after-california-bans-robotaxis-from-freeways" target="_blank" rel="noopener">
+                <h3 class="story-title">Waymo issues double safety recall days after California bans robotaxis from freeways</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/cybersecurity-expert-sounds-alarm-over-us-infrastructure-vulnerabilities-amid-widespread-outages" target="_blank" rel="noopener">
+                <h3 class="story-title">Cybersecurity expert sounds alarm over US infrastructure vulnerabilities amid widespread outages</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/jay-clayton-addresses-concerns-amid-widespread-tech-outages" target="_blank" rel="noopener">
+                <h3 class="story-title">Jay Clayton addresses concerns amid widespread tech outages</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/faa-pauses-router-installations-nationwide-after-tech-issue-caused-fridays-ground-stop" target="_blank" rel="noopener">
+                <h3 class="story-title">FAA pauses router installations nationwide after tech issue caused Friday's ground stop</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.foxbusiness.com/technology/microsoft-reveals-hidden-bug-behind-global-outlook-microsoft-365-outage" target="_blank" rel="noopener">
+                <h3 class="story-title">Microsoft reveals hidden bug behind global Outlook and Microsoft 365 outage</h3>
+              </a>
+              
+            </article></div>
+        </section>
+        <section class="source" id="verge">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#1a5c3a">The Verge</h2>
+            <a class="source-link" href="../sources/verge.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#1a5c3a"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/science/1042278/spacex-fcc-starmind-ai-space-data-centers" target="_blank" rel="noopener">
+                <h3 class="story-title">FCC signs off on SpaceX’s plan to put up to 1 million data center satellites into space</h3>
+              </a>
+              <p class="excerpt">In an announcement on Wednesday, the FCC says it authorized SpaceX to deploy up to 1 million AI chip-equipped satellites as part of the Elon Musk-owned company's "Starmind" initiative. With several others also pursuing t</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/gadgets/1042162/nothing-ear-note-ai-earbuds-reveal" target="_blank" rel="noopener">
+                <h3 class="story-title">Nothing offers a full look at its AI earbuds and charging case</h3>
+              </a>
+              <p class="excerpt">Nothing is showing off a much more detailed look at its upcoming AI earbuds ahead of their December 8th release. The Ear Note buds can record your calls, while their charging case can record, transcribe, and summarize yo</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/tech/1042071/meta-amazon-muse-ai-shopping-discussions" target="_blank" rel="noopener">
+                <h3 class="story-title">Amazon is reportedly in talks to end Muse AI shopping block</h3>
+              </a>
+              <p class="excerpt">Amazon has held talks about letting Meta's Muse AI agent shop on its online marketplace, according to a report from Fortune. The discussions, which could end Amazon's block on Muse, reportedly center on the kinds of prod</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/ai-artificial-intelligence/1040081/vibe-coding-open-source-music-firmware" target="_blank" rel="noopener">
+                <h3 class="story-title">Has vibe coding made open source the new normal for synths?</h3>
+              </a>
+              <p class="excerpt">The emergence of powerful vibe-coding agents and tools like Reverse Engineer Anything has caused chaos in the music gear world, leaving companies scrambling to figure out how to respond. While some, like Roland, have rem</p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/tech/1041571/jensen-huang-all-hands-nvidia-apology" target="_blank" rel="noopener">
+                <h3 class="story-title">Jensen Huang reportedly tells Nvidia staff it’s ‘not true’ Trump got him rehired</h3>
+              </a>
+              <p class="excerpt">Nvidia CEO Jensen Huang apologized to staff during his first all-hands since returning to the company, while attempting to distance himself from the narrative that the White House and tech leaders helped him get his job </p>
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.theverge.com/entertainment/1041417/david-fincher-netflix-cliff-booth-ai-interpositive" target="_blank" rel="noopener">
+                <h3 class="story-title">David Fincher is being dragged for suspected use of AI in his latest film</h3>
+              </a>
+              <p class="excerpt">Though David Fincher's fans had been eagerly anticipating The Further Mis-Adventures of Cliff Booth, early screenings of the Once Upon a Time in Hollywood sequel starring Brad Pitt have raised questions about whether gen</p>
+            </article></div>
+        </section>
+        <section class="source" id="siliconvalley">
+          <div class="source-header">
+            <h2 class="source-name" style="color:#2e7d32">Silicon Valley News</h2>
+            <a class="source-link" href="../sources/siliconvalley.html">View all →</a>
+          </div>
+          
+          <div class="source-rule" style="background:#2e7d32"></div>
+          <div class="stories">
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/11/25/store-san-jose-valley-fair-property-shop-food-dine-retail-economy-jobs/" target="_blank" rel="noopener">
+                <h3 class="story-title">New merchants arrive at Valley Fair as San Jose mall preps for holidays</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/11/25/google-property-tech-economy-office-real-estate-build-jobs-sunnyvale-ai/" target="_blank" rel="noopener">
+                <h3 class="story-title">Google expands again with purchase of two big Sunnyvale tech buildings</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/11/23/hotel-berkeley-loan-property-build-economy-travel-real-estate-develop/" target="_blank" rel="noopener">
+                <h3 class="story-title">Investors buy Berkeley hotel through auction in end to loan failure saga</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/11/19/anthropic-ipo-bay-area-economy/" target="_blank" rel="noopener">
+                <h3 class="story-title">Anthropic’s IPO could make thousands of employees millionaires. Who else stands to gain?</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/11/16/hotel-oakland-economy-build-loan-develop-property-real-estate-travel/" target="_blank" rel="noopener">
+                <h3 class="story-title">Oakland hotel near airport tumbles into loan default</h3>
+              </a>
+              
+            </article>
+            <article class="story">
+              <a class="story-link" href="https://www.siliconvalley.com/2026/11/10/cereal-oakland-grain-property-flour-factory-historic-real-estate-build/" target="_blank" rel="noopener">
+                <h3 class="story-title">Century-old Oakland factory is bought by cereal and grains producer</h3>
+              </a>
+              
+            </article></div>
+        </section>
+
+  <footer class="footer">
+    Generated automatically on November 25, 2026 · Your Daily AI Briefing
+  </footer>
+</div>
+</body>
+</html>
